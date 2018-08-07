@@ -13,6 +13,11 @@ const RouterConfig = ({ history, app }) => {
     component: () => import('./routes/Layout')
   })
 
+  const SelectDatabase = creatDynamic({
+    component: () => import('./routes/Upload/SelectDatabase'),
+    models: () => [import('./models/upload')]
+  })
+
   return (
     <Router history={history}>
       <Route path="/" component={() => {
@@ -22,6 +27,7 @@ const RouterConfig = ({ history, app }) => {
               <Route exact path="/" component={() => {
                 return <div />
               }} />
+              <Route path="/selectDatabase" component={SelectDatabase} />
             </Switch>
           </Layout>
         )
