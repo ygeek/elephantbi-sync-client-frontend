@@ -1,0 +1,30 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "BROWSER=none PORT=8384 roadhog dev",
+    "build": "roadhog build",
+    "lint": "eslint --ext .js src test",
+    "precommit": "npm run lint"
+  },
+  "dependencies": {
+    "antd": "^3.7.2",
+    "dva": "^2.3.1",
+    "history": "^4.7.2",
+    "immutable": "^3.8.2",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.2",
+    "path-to-regexp": "^2.2.1",
+    "qs": "^6.5.2",
+    "roadhog": "^2.4.2",
+    "url-join": "^4.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.14.0",
+    "eslint-config-umi": "^0.1.1",
+    "eslint-plugin-flowtype": "^2.34.1",
+    "eslint-plugin-import": "^2.6.0",
+    "eslint-plugin-jsx-a11y": "^5.1.1",
+    "eslint-plugin-react": "^7.1.0",
+    "husky": "^0.12.0"
+  }
+}
