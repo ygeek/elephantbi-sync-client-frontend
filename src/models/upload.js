@@ -8,10 +8,12 @@ export default {
   state: {
     filterTableList: [],
     sourceType: null,
-    currentStep: 0,
+    currentStep: 3,
     databaseInfo: null,
     dataSource: null,
     sublimeData: null,
+    tableInfo: null,
+    description: null,
   },
 
   subscriptions: {
@@ -32,6 +34,7 @@ export default {
       const { databaseInfo } = yield select(state => state.upload);
       const { data, err } = yield call(_connectDatabase, databaseInfo);
       if (data) {
+        yield put({ type: 'saveTableInfo', payload: data })
         yield put({ type: 'fetchdbDataSource' })
       }
     },
@@ -62,8 +65,12 @@ export default {
     setDatabaseInfo(state, { payload }) {
       return { ...state, databaseInfo: payload }
     },
+    saveTableInfo(state, { payload }) {
+      return { ...state, tableInfo: payload }
+    },
     saveDataSource(state, { payload }) {
       const tableData = _.get(payload, 'preview')
+      const tableInfo = _.get(state, 'tableInfo')
       const tableNames = []
       const tableToColumns = {}
       tableData.forEach((item) => {
@@ -74,6 +81,8 @@ export default {
         ...state,
         dataSource: payload,
         sublimeData: {
+          name: _.get(tableInfo, 'origin_name'),
+          description: _.get(state, 'description'),
           table_names: tableNames,
           table_to_columns: tableToColumns,
         }

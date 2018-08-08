@@ -15,13 +15,14 @@ class SelectDatabase extends React.Component {
     const { dispatch, upload } = this.props;
     const sourceType = _.get(upload, 'sourceType')
     const renderItems = (list) => {
-      return list.map((item) => {
+      return list.map((item, index) => {
         const type = _.get(item, 'source_type')
         const click = () => {
           dispatch({ type: 'upload/setSourceType', payload: type })
         }       
         return (
           <DatabaseItem
+            key={index}
             data={item}
             click={click}
             checked={sourceType === type}

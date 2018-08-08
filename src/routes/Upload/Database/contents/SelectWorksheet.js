@@ -58,7 +58,6 @@ class SelectWorksheet extends React.Component {
     const currentDataSource = _.get(dataSource[activeKey], 'records', [])
     const currentColumn = _.get(dataSource[activeKey], 'columns', [])
     const currentTableName = _.get(dataSource[activeKey], 'table_name', null)
-    console.log('000', sublimeData)
     const tableNames = _.get(sublimeData, 'table_names', [])
     return (
       <Row className={styles.selectWorksheet}>
@@ -78,7 +77,10 @@ class SelectWorksheet extends React.Component {
           >
             {
               tableNames.map((item, index) => (
-                <div className={styles.checkItem}>
+                <div
+                  className={styles.checkItem}
+                  key={index}
+                >
                   <Checkbox
                     value={item.old_table_name}
                   >

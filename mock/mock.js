@@ -33,5 +33,8 @@ const workSheetPreview = {
 
 module.exports = {
   'GET /ds/db/preview': workSheetPreview,
-  'POST /ds/db/conn': { connect: 1 }
+  'POST /ds/db/conn': {
+    name: "197ee1769aae11e8af630a58c0a80337.xlsx",
+    origin_name: "HR(1)_258.xlsx"
+  }
 }

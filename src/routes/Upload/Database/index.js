@@ -7,6 +7,8 @@ import { routerRedux } from 'dva/router'
 import { stepConfig, actionConfig } from './config';
 import AccountInformation from './contents/AccountInfomation';
 import SelectWorksheet from './contents/SelectWorksheet'
+import BasicInformation from './contents/BasicInformation'
+import SynchronizationCycle from './contents/SynchronizationCycle'
 import Footer from '../Footer';
 import styles from './index.less'
 
@@ -14,7 +16,7 @@ const { Step } = Steps;
 
 
 const Database = ({ upload, dispatch }) => {
-  const { currentStep, dataSource, sublimeData } = upload;
+  const { currentStep, dataSource, sublimeData, sourceType } = upload;
   const cancel = () => {
     dispatch(routerRedux.push('/selectDatabase'))
   }
@@ -63,6 +65,19 @@ const Database = ({ upload, dispatch }) => {
                   changeTableToColumns={changeTableToColumns}
                   changeFilterTableList={changeFilterTableList}
                 />
+              ) : null
+            }
+            {
+              currentStep === 2 ? (
+                <BasicInformation
+                  sublimeData={sublimeData}
+                  sourceType={sourceType}
+                />
+              ) : null
+            }
+            {
+              currentStep === 3 ? (
+                <SynchronizationCycle />
               ) : null
             }
           </div>
