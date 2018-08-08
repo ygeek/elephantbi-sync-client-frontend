@@ -6,9 +6,9 @@ export const stepConfig = [
   { title: '同步模式' }
 ]
 
-export const actionConfig = ({ cancel, goPrev, goAfter }) => ({
+export const actionConfig = ({ cancel, goPrev, goAfter, changeTableNames }) => ({
   0: { text1: '取消', text2: '下一步', click1: cancel, click2: goAfter },
-  1: { text1: '上一步', text2: '下一步', click1: goPrev, click2: goAfter },
+  1: { text1: '上一步', text2: '下一步', click1: goPrev, click2: () => { changeTableNames(); goAfter();  } },
   2: { text1: '上一步', text2: '下一步', click1: goPrev, click2: goAfter },
   3: { text1: '上一步', text2: '下一步', click1: goPrev, click2: goAfter },
   4: { text1: '上一步', text2: '完成', click1: goPrev }

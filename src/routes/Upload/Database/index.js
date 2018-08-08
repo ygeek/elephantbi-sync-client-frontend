@@ -28,6 +28,14 @@ const Database = ({ upload, dispatch }) => {
   const changeTableToColumns = (payload) => {
     dispatch({ type: 'upload/changeTableToColumns', payload })
   }
+
+  const changeFilterTableList = (payload) => {
+    dispatch({ type: 'upload/changeFilterTableList', payload })
+  }
+
+  const changeTableNames = () => {
+    dispatch({ type: 'upload/changeTableNames' })
+  }
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -53,6 +61,7 @@ const Database = ({ upload, dispatch }) => {
                   dispatch={dispatch}
                   sublimeData={sublimeData}
                   changeTableToColumns={changeTableToColumns}
+                  changeFilterTableList={changeFilterTableList}
                 />
               ) : null
             }
@@ -60,7 +69,7 @@ const Database = ({ upload, dispatch }) => {
         </div>
       </div>
       <Footer
-        {...actionConfig({ cancel, goPrev, goAfter })[currentStep]}
+        {...actionConfig({ cancel, goPrev, goAfter, changeTableNames })[currentStep]}
       />
     </div>
   )

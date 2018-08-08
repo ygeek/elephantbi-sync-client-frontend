@@ -6,6 +6,7 @@ export default {
   namespace: 'upload',
 
   state: {
+    filterTableList: [],
     sourceType: null,
     currentStep: 0,
     databaseInfo: null,
@@ -46,6 +47,9 @@ export default {
   },
 
   reducers: {
+    changeFilterTableList(state, { payload }) {
+      return { ...state, filterTableList: payload }
+    },
     setSourceType(state, { payload }) {
       return { ...state, sourceType: payload }
     },
@@ -72,6 +76,17 @@ export default {
         sublimeData: {
           table_names: tableNames,
           table_to_columns: tableToColumns,
+        }
+      }
+    },
+
+    changeTableNames(state) {
+      const { filterTableList } = state;
+      return {
+        ...state,
+        sublimeData: {
+          ...state.sublimeData,
+          table_names: state.sublimeData.table_names.filter(item => (filterTableList.includes(item.old_table_name)))
         }
       }
     },
