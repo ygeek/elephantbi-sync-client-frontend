@@ -54,7 +54,7 @@ class SelectDatabase extends React.Component {
               })
               return;
             }
-            dispatch(routerRedux.push('/upload'))
+            dispatch(routerRedux.push('/database'))
           }}
         />
       </div>

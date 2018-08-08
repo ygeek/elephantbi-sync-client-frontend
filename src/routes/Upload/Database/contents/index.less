@@ -1,0 +1,47 @@
+.accountInformation {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  .content {
+    width: 700px;
+    margin: auto;
+  }
+  .bottomButton {
+    text-align: center;
+  }
+}
+
+.selectWorksheet {
+  height: 100%;
+  width: 100%;
+  :global(.ant-tabs) {
+    width: 160px;
+    float: left;
+    display: inline-block;
+    :global(.ant-tabs-bar) {
+      width: 100%;
+      border-left: none !important;
+      border-right: 1px solid #ccc;
+      :global(.ant-tabs-tab) {
+        padding: 8px 0 8px 28px;
+        font-size: 12px;
+        height: 28px;
+        &:hover {
+          color: rgba(0, 0, 0, 0.65);
+        }
+      }
+        
+      :global(.ant-tabs-tab-active) {
+        color: rgba(0, 0, 0, 0.65);
+        font-weight: 600;
+      }
+    }
+  }
+
+  .dataTable {
+    height: 100%;
+    width: calc(~"100% - 160px");
+    float: left;
+  }
+}
