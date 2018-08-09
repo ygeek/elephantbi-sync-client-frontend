@@ -83,3 +83,9 @@ export const mostOptions = [
   { title: '5次', value: '4' },
   { title: '10次', value: '10' },
 ]
+
+export const syncModeOptions = [
+  { title: '全量替换', value: 'all' },
+  { title: '增量追加（依据时间）', value: 'date' },
+  { title: '增量追加（依据数值）', value: 'number' }
+]

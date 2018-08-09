@@ -4,6 +4,7 @@ import 'antd/lib/form/style/css'
 import Input from 'antd/lib/input'
 import 'antd/lib/input/style/css'
 import _ from 'lodash'
+import Footer from '../../Footer';
 import { databaseConfig } from '../../SelectDatabase/config'
 import styles from './index.less'
 
@@ -13,8 +14,16 @@ const formLayout = {
   wrapperCol: { span: 16, offset: 2 }
 }
 
-const BasicInformation = ({ sublimeData, sourceType, form }) => {
-  console.log('111111111111', sublimeData, sourceType)
+const BasicInformation = ({
+  sublimeData,
+  sourceType,
+  form,
+  changeTableNames,
+  goPrev,
+  goAfter,
+  changeFileName,
+  changeDescription
+}) => {
   const { getFieldDecorator } = form
   const tableNames = _.get(sublimeData, 'table_names', [])
   const getTableNameItems = () => {
@@ -47,8 +56,21 @@ const BasicInformation = ({ sublimeData, sourceType, form }) => {
       </table>
     )
   }
+
+  const submit = () => {
+    form.validateFields((errors, values) => {
+      if (!errors) {
+        const { name, description, source_type, ...tableNames } = values
+        changeFileName(name)
+        changeDescription(description);
+        changeTableNames(tableNames);
+        goAfter()
+      }
+    })
+  }
   return (
     <div className={styles.basicInformation}>
+      <div className={styles.wrapper}>
       <Form className={styles.formField}>
         <FormItem
           {...formLayout}
@@ -90,6 +112,13 @@ const BasicInformation = ({ sublimeData, sourceType, form }) => {
           }
         </FormItem>
       </Form>
+      </div>
+      <Footer
+        text1="上一步"
+        text2="下一步"
+        click1={goPrev}
+        click2={submit}
+      />
     </div>
   )
 }

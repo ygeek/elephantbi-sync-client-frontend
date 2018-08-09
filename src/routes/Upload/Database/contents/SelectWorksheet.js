@@ -4,6 +4,7 @@ import 'antd/lib/row/style/css'
 import Checkbox from 'antd/lib/checkbox'
 import 'antd/lib/checkbox/style/css'
 import _ from 'lodash'
+import Footer from '../../Footer';
 import DataSourceTable from 'components/DataSourceTable'
 import styles from './index.less'
 
@@ -53,7 +54,7 @@ class SelectWorksheet extends React.Component {
 
 
   render() {
-    const { dataSource, dispatch, sublimeData, changeTableToColumns } = this.props;
+    const { dataSource, dispatch, sublimeData, changeTableToColumns, goPrev, goAfter, filterTableNames } = this.props;
     const { activeKey } = this.state;
     const currentDataSource = _.get(dataSource[activeKey], 'records', [])
     const currentColumn = _.get(dataSource[activeKey], 'columns', [])
@@ -61,6 +62,7 @@ class SelectWorksheet extends React.Component {
     const tableNames = _.get(sublimeData, 'table_names', [])
     return (
       <Row className={styles.selectWorksheet}>
+        <div className={styles.wrapper}>
         <div className={styles.checkboxGroup}>
           <div className={styles.checkItem}>
             <Checkbox
@@ -111,6 +113,16 @@ class SelectWorksheet extends React.Component {
             changeTableToColumns={changeTableToColumns}
           />
         </div>
+        </div>
+        <Footer
+          text1="上一步"
+          text2="下一步"
+          click1={goPrev}
+          click2={() => {
+            filterTableNames();
+            goAfter();
+          }}
+        />
       </Row>
     )
   }

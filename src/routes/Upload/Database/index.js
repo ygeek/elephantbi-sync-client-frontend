@@ -4,12 +4,12 @@ import Steps from 'antd/lib/steps';
 import 'antd/lib/steps/style/css'
 import _ from 'lodash';
 import { routerRedux } from 'dva/router'
-import { stepConfig, actionConfig } from './config';
+import { stepConfig } from './config';
 import AccountInformation from './contents/AccountInfomation';
 import SelectWorksheet from './contents/SelectWorksheet'
 import BasicInformation from './contents/BasicInformation'
 import SynchronizationCycle from './contents/SynchronizationCycle'
-import Footer from '../Footer';
+import SynchronousMode from './contents/SynchronousMode'
 import styles from './index.less'
 
 const { Step } = Steps;
@@ -17,6 +17,7 @@ const { Step } = Steps;
 
 const Database = ({ upload, dispatch }) => {
   const { currentStep, dataSource, sublimeData, sourceType } = upload;
+  console.log('1111111111111', sublimeData)
   const cancel = () => {
     dispatch(routerRedux.push('/selectDatabase'))
   }
@@ -35,57 +36,95 @@ const Database = ({ upload, dispatch }) => {
     dispatch({ type: 'upload/changeFilterTableList', payload })
   }
 
-  const changeTableNames = () => {
-    dispatch({ type: 'upload/changeTableNames' })
+  const changeFileName = (name) => {
+    dispatch({ type: 'upload/changeFileName', payload: name })
+  }
+
+  const changeDescription = (description) => {
+    dispatch({ type: 'upload/changeDescription', payload: description })
+  }
+
+  const filterTableNames = (tableNames) => {
+    dispatch({ type: 'upload/filterTableNames', payload: tableNames })
+  }
+
+  const changeSyncInfo = (name, params) => {
+    dispatch({ type: 'upload/changeSyncInfo', payload: { name, params } })
+  }
+
+  const changeTableNames = (payload) => {
+    dispatch({ type: 'upload/changeTableNames', payload })
+  }
+
+  const submitSyncCycle = (payload) => {
+    dispatch({ type: 'upload/submitSyncCycle', payload })
   }
   return (
     <div className={styles.container}>
-      <div className={styles.wrapper}>
-        <div className={styles.content}>
-          <div className={styles.title}>连接数据库</div>
-          <div className={styles.steps}>
-            <Steps size="small" current={currentStep}>
-              { stepConfig.map((step, index) => <Step key={index} title={step.title}/>) }
-            </Steps>
-          </div>
-          <div className={styles.stepContent}>
-            {
-              currentStep === 0 ? (
-                <AccountInformation
-                  dispatch={dispatch}
-                />
-              ) : null
-            }
-            {
-              currentStep === 1 ? (
-                <SelectWorksheet
-                  dataSource={_.get(dataSource, 'preview', [])}
-                  dispatch={dispatch}
-                  sublimeData={sublimeData}
-                  changeTableToColumns={changeTableToColumns}
-                  changeFilterTableList={changeFilterTableList}
-                />
-              ) : null
-            }
-            {
-              currentStep === 2 ? (
-                <BasicInformation
-                  sublimeData={sublimeData}
-                  sourceType={sourceType}
-                />
-              ) : null
-            }
-            {
-              currentStep === 3 ? (
-                <SynchronizationCycle />
-              ) : null
-            }
-          </div>
+      <div className={styles.content}>
+        <div className={styles.title}>连接数据库</div>
+        <div className={styles.steps}>
+          <Steps size="small" current={currentStep}>
+            {stepConfig.map((step, index) => <Step key={index} title={step.title} />)}
+          </Steps>
+        </div>
+        <div className={styles.stepContent}>
+          {
+            currentStep === 0 ? (
+              <AccountInformation
+                dispatch={dispatch}
+                cancel={cancel}
+                goAfter={goAfter}
+              />
+            ) : null
+          }
+          {
+            currentStep === 1 ? (
+              <SelectWorksheet
+                dataSource={_.get(dataSource, 'preview', [])}
+                dispatch={dispatch}
+                sublimeData={sublimeData}
+                changeTableToColumns={changeTableToColumns}
+                changeFilterTableList={changeFilterTableList}
+                filterTableNames={filterTableNames}
+                goPrev={goPrev}
+                goAfter={goAfter}
+              />
+            ) : null
+          }
+          {
+            currentStep === 2 ? (
+              <BasicInformation
+                sublimeData={sublimeData}
+                sourceType={sourceType}
+                goPrev={goPrev}
+                goAfter={goAfter}
+                changeTableNames={changeTableNames}
+                changeFileName={changeFileName}
+                changeDescription={changeDescription}
+              />
+            ) : null
+          }
+          {
+            currentStep === 3 ? (
+              <SynchronizationCycle
+                goPrev={goPrev}
+                goAfter={goAfter}
+                submitSyncCycle={submitSyncCycle}
+              />
+            ) : null
+          }
+          {
+            currentStep === 4 ? (
+              <SynchronousMode
+                sublimeData={sublimeData}
+                changeSyncInfo={changeSyncInfo}
+                goPrev={goPrev}
+              />
+            ) : null
+          }
         </div>
       </div>
-      <Footer
-        {...actionConfig({ cancel, goPrev, goAfter, changeTableNames })[currentStep]}
-      />
     </div>
   )
 }

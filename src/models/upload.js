@@ -8,7 +8,7 @@ export default {
   state: {
     filterTableList: [],
     sourceType: null,
-    currentStep: 3,
+    currentStep: 0,
     databaseInfo: null,
     dataSource: null,
     sublimeData: null,
@@ -73,9 +73,11 @@ export default {
       const tableInfo = _.get(state, 'tableInfo')
       const tableNames = []
       const tableToColumns = {}
+      const sync_info = {}
       tableData.forEach((item) => {
         tableNames.push({ new_table_name: item.table_name, old_table_name: item.table_name })
         Object.assign(tableToColumns, { [item.table_name]: item.columns })
+        Object.assign(sync_info, { [item.table_name]: { sync_mode: 'all', column: null } })
       })
       return {
         ...state,
@@ -85,11 +87,12 @@ export default {
           description: _.get(state, 'description'),
           table_names: tableNames,
           table_to_columns: tableToColumns,
+          sync_info
         }
       }
     },
 
-    changeTableNames(state) {
+    filterTableNames(state) {
       const { filterTableList } = state;
       return {
         ...state,
@@ -114,6 +117,68 @@ export default {
             ...state.sublimeData.table_to_columns,
             [tableName] : newColumns
           }
+        }
+      }
+    },
+
+    changeSyncInfo(state, { payload }) {
+      const { name, params } = payload;
+      return {
+        ...state,
+        sublimeData: {
+          ...state.sublimeData,
+          sync_info: {
+            ...state.sublimeData.sync_info,
+            [name]: {
+              ...state.sublimeData.sync_info[name],
+              ...params,
+            }
+          }
+        }
+      }
+    },
+
+    changeFileName(state, { payload }) {
+      return {
+        ...state,
+        sublimeData: {
+          ...state.sublimeData,
+          name: payload
+        }
+      }
+    },
+
+    changeDescription(state, { payload }) {
+      return {
+        ...state,
+        sublimeData: {
+          ...state.sublimeData,
+          description: payload
+        }
+      }
+    },
+
+    changeTableNames(state, { payload }) {
+      return {
+        ...state,
+        sublimeData: {
+          ...state.sublimeData,
+          table_names: state.sublimeData.table_names.map((item) => {
+            return {
+              ...item,
+              new_table_name: payload[item.old_table_name]
+            }
+          })
+        }
+      }
+    },
+
+    submitSyncCycle(state, { payload }) {
+      return {
+        ...state,
+        sublimeData: {
+          ...state.sublimeData,
+          ...payload
         }
       }
     }
