@@ -108,7 +108,7 @@ class SelectWorksheet extends React.Component {
             columns={currentColumn}
             dataSource={currentDataSource}
             tableName={currentTableName}
-            sublimeData={sublimeData}
+            tableToColumns={_.get(sublimeData, `table_to_columns[${currentTableName}]`)}
             dispatch={dispatch}
             changeTableToColumns={changeTableToColumns}
           />

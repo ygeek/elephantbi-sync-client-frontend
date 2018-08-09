@@ -9,9 +9,9 @@ const DataSourceTable = ({
   columns,
   sublimeData,
   dispatch,
+  tableToColumns,
   changeTableToColumns
 }) => {
-  const tableToColumns = _.get(sublimeData, `table_to_columns[${tableName}]`)
   const getThead = () => {
     return _.map(columns, (item, index) => {
       return (

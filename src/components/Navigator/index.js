@@ -7,7 +7,14 @@ import styles from './index.less';
 const Navigator = ({ dispatch }) => {
   return (
     <div className={styles.container}>
-      <button className={`${styles.logo} ${styles.click}`}>ElephantBI</button>
+      <button
+        className={`${styles.logo} ${styles.click}`}
+        onClick={() => {
+          dispatch(routerRedux.push('/'))
+        }}
+      >
+        ElephantBI
+      </button>
       <button className={`${styles.ds} ${styles.click}`}>我的数据源</button>
       <div className={styles.right}>
         <button
