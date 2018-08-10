@@ -15,7 +15,14 @@ const Navigator = ({ dispatch }) => {
       >
         ElephantBI
       </button>
-      <button className={`${styles.ds} ${styles.click}`}>我的数据源</button>
+      <button
+        className={`${styles.ds} ${styles.click}`}
+        onClick={() => {
+          dispatch(routerRedux.push('/dataSource/list'))
+        }}
+      >
+        我的数据源
+      </button>
       <div className={styles.right}>
         <button
           className={`${styles.click}`}

@@ -14,3 +14,11 @@ export async function _fetchTableIds(id) {
     url: `/ds/${id}/tables`
   })
 }
+
+export async function _fetchDsList(params) {
+  return requestSimple({
+    method: 'GET',
+    url: '/ds/list',
+    params
+  })
+}

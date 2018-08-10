@@ -33,6 +33,11 @@ const RouterConfig = ({ history, app }) => {
     models: () => [import('./models/dsEdit')]
   })
 
+  const DsList = creatDynamic({
+    component: () => import('./routes/DsList'),
+    models: () => [import('./models/dsList')]
+  })
+
   return (
     <Router history={history}>
       <Route path="/" component={() => {
@@ -40,8 +45,9 @@ const RouterConfig = ({ history, app }) => {
           <Layout>
             <Switch>
               <Route exact path="/" component={() => {
-                return <div />
+                return <Redirect to="/dataSource/list" />
               }} />
+              <Route path="/dataSource/list" component={DsList} />
               <Route path="/selectDatabase" component={SelectDatabase} />
               <Route path="/dsDetail/:id" component={DsDetail} />
               <Route path="/ds/edit/:id" component={DsEdit} />
