@@ -6,9 +6,8 @@ import Form from 'antd/lib/form'
 import 'antd/lib/form/style/css'
 import Select from 'antd/lib/select'
 import 'antd/lib/select/style/css'
-import { syncModeOptions } from './optionsConfig'
+import { syncModeOptions } from '../../Upload/Database/contents/optionsConfig'
 import Input from 'antd/lib/input'
-import Footer from '../../Footer';
 import 'antd/lib/input/style/css'
 import styles from './index.less'
 
@@ -66,33 +65,24 @@ const SynchronousMode = ({ sublimeData, changeSyncInfo, goPrev }) => {
     )
   }
   return (
-    <div className={styles.synchronousMode}>
-      <div className={styles.wrapper}>
-      <Tabs>
-        {
-          tableNames.map((item, index) => {
-            return (
-              <TabPane
-                tab={item.new_table_name}
-                key={index}
-              >
-                {renderForm({
-                  columns: _.get(tableToColumns, item.old_table_name),
-                  oldName: item.old_table_name,
-                  serial: index
-                })}
-              </TabPane>
-            )
-          })
-        }
-      </Tabs>
-      </div>
-      <Footer
-        text1="上一步"
-        text2="完成"
-        click1={goPrev}
-      />
-    </div>
+    <Tabs className={styles.synchronousMode}>
+      {
+        tableNames.map((item, index) => {
+          return (
+            <TabPane
+              tab={item.new_table_name}
+              key={index}
+            >
+              {renderForm({
+                columns: _.get(tableToColumns, item.old_table_name),
+                oldName: item.old_table_name,
+                serial: index
+              })}
+            </TabPane>
+          )
+        })
+      }
+    </Tabs>
   )
 }
 

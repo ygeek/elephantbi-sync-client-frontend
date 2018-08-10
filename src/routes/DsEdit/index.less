@@ -1,0 +1,40 @@
+.container {
+  height: 100%;
+  .wrapper {
+    height: calc(~"100% - 60px");
+    padding: 20px;
+    .content {
+      height: 100%;
+      width: 100%;
+      background-color: #fff;
+      padding: 20px;
+      .title {
+        height: 30px;
+        line-height: 30px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      :global(.ant-tabs) {
+        height: calc(~"100% - 30px");
+        :global(.ant-tabs-nav-scroll) {
+          text-align: center;
+        }
+        :global(.ant-tabs-bar) {
+          margin: 0px;
+        }
+        :global(.ant-tabs-tab) {
+          height: 40px;
+          padding: 0px;
+          line-height: 40px
+        }
+        :global(.ant-tabs-content) {
+          height: calc(~"100% - 40px")
+        }
+        :global(.ant-tabs-tabpane) {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+  }
+}

@@ -3,13 +3,34 @@ import { connect } from 'dva'
 import _ from 'lodash'
 import Tabs from 'antd/lib/tabs'
 import 'antd/lib/tabs/style/css'
+import Icon from 'antd/lib/icon'
+import 'antd/lib/icon/style/css';
+import Dropdown from 'antd/lib/dropdown'
+import 'antd/lib/dropdown/style/css'
+import Menu from 'antd/lib/menu'
+import 'antd/lib/menu/style/css'
 import DataSourceTable from 'components/DataSourceTable'
 import moment from 'moment'
+import { routerRedux } from 'dva/router'
 import styles from './index.less'
 
 const DsDetail = ({ dsDetail, dispatch }) => {
+  const { dsDetail: dataSource, activeKey, tableIds, dsId } = dsDetail
   const { TabPane } = Tabs
-  const { dsDetail: dataSource, activeKey, tableIds } = dsDetail
+  const MenuItem = Menu.Item
+  const clickMenu = ({ key }) => {
+    if (key === 'edit') {
+      dispatch(routerRedux.push(`/ds/edit/${dsId}`))
+    }
+  }
+  const operateMenu = (
+    <Menu
+      onClick={clickMenu}
+    >
+      <MenuItem key="edit">编辑</MenuItem>
+      <MenuItem key="delete">删除</MenuItem>
+    </Menu>
+  )
   const changeActiveKey = (key) => {
     dispatch({ type: 'dsDetail/changeActiveKey', payload: key })
     dispatch({ type: 'dsDetail/fetchDataSourceLog' })
@@ -26,6 +47,13 @@ const DsDetail = ({ dsDetail, dispatch }) => {
               ) : null
             }
             <span>{_.get(dataSource, 'name')}</span>
+          </div>
+          <div className={styles.operate}>
+            <Dropdown
+             overlay={operateMenu}
+            >
+              <Icon type="ellipsis" />
+            </Dropdown>
           </div>
         </div>
         <div className={styles.remark}>
