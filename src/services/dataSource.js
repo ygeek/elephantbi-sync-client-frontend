@@ -22,3 +22,32 @@ export async function _fetchDsList(params) {
     params
   })
 }
+
+export async function _deleteDs(id) {
+  return requestSimple({
+    method: 'delete',
+    url: `ds/${id}`
+  })
+}
+
+export async function _fetchUsers() {
+  return requestSimple({
+    method: 'GET',
+    url: '/users'
+  })
+}
+
+export async function _fetchGroups() {
+  return requestSimple({
+    method: 'GET',
+    url: '/groups'
+  })
+}
+
+export async function _tranferUser(params, id) {
+  return requestSimple({
+    url: `/ds/${id}/owner`,
+    method: 'POST',
+    body: params
+  })
+}

@@ -1,6 +1,12 @@
 import pathToRegexp from 'path-to-regexp';
 import _ from 'lodash'
-import { _fetchDsList } from '../services/dataSource'
+import {
+  _fetchDsList,
+  _deleteDs,
+  _fetchUsers,
+  _fetchGroups,
+  _tranferUser
+} from '../services/dataSource'
 
 export default {
   namespace: 'dsList',
@@ -12,6 +18,10 @@ export default {
       pageSize: 20
     },
     canSync: [],
+    users: [],
+    groups: [],
+    transferModalVisible: false,
+    currentTransferId: null,
   },
 
   subscriptions: {
@@ -21,6 +31,8 @@ export default {
        const match = pathToRegexp('/dataSource/list').exec(pathname)
        if (match) {
          dispatch({ type: 'checkStatus' })
+         dispatch({ type: 'fetchUsers' })
+         dispatch({ type: 'fetchGroups' })
        }
      })
     }
@@ -53,13 +65,39 @@ export default {
       const { pageInfo } = yield select(state => state.dsList)
       const { data } = yield call(_fetchDsList, {
         page: pageInfo.page,
-        page_size: pageInfo.page_size
+        page_size: pageInfo.pageSize
       });
       if (data) {
         const dsList = _.get(data, 'list', [])
         yield put({ type: 'saveDsList', payload: dsList })
       }
     },
+    * deleteDs({ payload: id }, { select, call, put }) {
+      const { data } = yield call(_deleteDs, id);
+      if (data) {
+        yield put({ type: 'resetPageInfo' });
+        yield put({ type: 'fetchDsList' })
+      }
+    },
+    * fetchUsers(action, { select, put, call }) {
+      const { data } = yield call(_fetchUsers);
+      if (data) {
+        yield put({ type: 'setUsers', payload: data })
+      }
+    },
+    * fetchGroups(action, { select, call, put }) {
+      const { data } = yield call(_fetchGroups)
+      if (data) {
+        yield put({ type: 'setGroups', payload: data })
+      }
+    },
+    * tranferUser({ payload }, { select, call, put }) {
+      const { currentTransferId } = yield select(state => state.dsList);
+      const { data } = yield call(_tranferUser, payload, currentTransferId)
+      if (data) {
+        yield put({ type: 'fetchDsList' })
+      }
+    }
   },
 
   reducers: {
@@ -84,6 +122,24 @@ export default {
           page: state.pageInfo.page + 1
         }
       }
+    },
+    resetPageInfo(state) {
+      return { ...state, pageInfo: { page: 1, pageSize: 20 } }
+    },
+    setUsers(state, { payload }) {
+      return { ...state, users: payload }
+    },
+    setGroups(state, { payload }) {
+      return { ...state, groups: payload }
+    },
+    showTransferModal(state) {
+      return { ...state, transferModalVisible: true }
+    },
+    hideTransferModal(state) {
+      return { ...state, transferModalVisible: false }
+    },
+    setCurrentTransferId(state, { payload: id }) {
+      return { ...state, currentTransferId: id }
     }
   }
 }

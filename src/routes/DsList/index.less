@@ -125,3 +125,31 @@
     vertical-align: middle;
   }
 }
+
+.shareModal {
+  .form {
+    display: inline-block;
+    width: 384px;
+    margin-right: 20px;
+    vertical-align: top;
+    :global(.ant-form-explain) {
+      color: #EE6A50;
+    }
+    :global(.has-error) :global(.ant-select-selection) {
+      border-color: #EE6A50;
+    }
+    :global(.ant-select-arrow) {
+      display: none;
+    }
+  }
+  .submitButton {
+    height: 32px;
+    width: 68px;
+    border: none;
+    background-color: #40a9ff;
+    border-radius: 4px;
+    outline: none;
+    color: #fff;
+    vertical-align: top;
+  }
+}

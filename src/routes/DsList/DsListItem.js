@@ -9,6 +9,8 @@ import Dropdown from 'antd/lib/dropdown'
 import 'antd/lib/dropdown/style/css'
 import Menu from 'antd/lib/menu'
 import 'antd/lib/menu/style/css'
+import Modal from 'antd/lib/modal'
+import 'antd/lib/modal/style/css'
 import { syncStatus } from '../config'
 import { databaseConfig } from '../Upload/SelectDatabase/config'
 import styles from './index.less'
@@ -19,16 +21,66 @@ const DsListItem = ({
   checked,
   changeCanSync,
   toDetail,
-  toEdit
+  toEdit,
+  showTransfer,
+  deleteDs
 }) => {
   const MenuItem = Menu.Item
+  const checkSyncing = (status) => {
+    if ([2, 3, 4, 5].includes(status)) {
+      return true
+    }
+    return false
+  }
   const menuOnClick = ({ key }) => {
     switch(key) {
       case 'detail':
         toDetail(data.id);
         break;
       case 'edit':
-        toEdit(data.id);
+        if (checkSyncing(data.sync_status)) {
+          Modal.confirm({
+            title: '提示',
+            content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
+            cancelText: '取消',
+            okText: '停止并继续',
+            onOk() {
+              toEdit(data.id);
+            }
+          })
+        } else {
+          toEdit(data.id);
+        }
+        break;
+      case 'delete':
+        if (checkSyncing(data.sync_status)) {
+          Modal.confirm({
+            title: '提示',
+            content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
+            cancelText: '取消',
+            okText: '停止并继续',
+            onOk() {
+              deleteDs(data.id)
+            }
+          })
+        } else {
+          deleteDs(data.id)
+        }
+        break;
+      case 'transfer':
+        if (checkSyncing(data.sync_status)) {
+          Modal.confirm({
+            title: '提示',
+            content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
+            cancelText: '取消',
+            okText: '停止并继续',
+            onOk() {
+              showTransfer(data.id)
+            }
+          })
+        } else {
+          showTransfer(data.id)
+        }
         break;
       default:
         break;

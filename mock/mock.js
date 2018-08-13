@@ -484,6 +484,20 @@ const dataSource = {
   }
 }
 
+const users = [
+  { name: '长泽亚美', id: 1, avatar: null, email: '11111111' },
+  { name: '石原里美', id: 2, avatar: null, email: '22222222' },
+  { name: '新垣结衣', id: 3, avatar: null, email: '33333333' },
+  { name: '上野树里', id: 4, avatar: null, email: '44444444' }
+]
+
+const groups = [
+  { name: '群组1', id: 1 },
+  { name: '群组2', id: 2 },
+  { name: '群组3', id: 3 },
+  { name: '群组4', id: 4 } 
+]
+
 module.exports = {
   'GET /ds/db/preview': workSheetPreview,
   'GET /ds/list': dataSource,
@@ -493,5 +507,6 @@ module.exports = {
   },
   'GET /ds/:id': dashDetail,
   'GET /ds/:id/tables': tableIds,
-
+  'GET /users': users,
+  'GET /groups': groups
 }
