@@ -498,6 +498,17 @@ const groups = [
   { name: '群组4', id: 4 } 
 ]
 
+const dsLog = {
+  list: [{
+    created_at: "2018-05-30T11:52:08.562736+00:00",
+    filename: "supermarket",
+    id: 124,
+    operation: "ADD",
+    source_type: 1,
+    table_name: "订单"
+  }]
+}
+
 module.exports = {
   'GET /ds/db/preview': workSheetPreview,
   'GET /ds/list': dataSource,
@@ -508,5 +519,6 @@ module.exports = {
   'GET /ds/:id': dashDetail,
   'GET /ds/:id/tables': tableIds,
   'GET /users': users,
-  'GET /groups': groups
+  'GET /groups': groups,
+  'GET /table/:id/logs': dsLog
 }

@@ -1,5 +1,5 @@
 import pathToRegexp from 'path-to-regexp';
-import { _fetchDsDetail, _fetchTableIds } from '../services/dataSource'
+import { _fetchDsDetail, _fetchTableIds, _fetchDsLog } from '../services/dataSource'
 
 export default {
   namespace: 'dsDetail',
@@ -8,7 +8,8 @@ export default {
     dsId: null,
     tableIds: [],
     activeKey: '0',
-    dsDetail: null
+    dsDetail: null,
+    dsLog: [],
   },
 
   subscriptions: {
@@ -31,6 +32,7 @@ export default {
       if (data) {
         yield put({ type: 'saveTableIds', payload: data })
         yield put({ type: 'fetchDsDetail' })
+        yield put({ type: 'fetchDsLog' })
       }
     },
     * fetchDsDetail(action, { select, call, put }) {
@@ -40,7 +42,16 @@ export default {
       if (data) {
         yield put({ type: 'saveDsDetail', payload: data })
       }
-    }
+    },
+
+    * fetchDsLog(action, { select, call, put }) {
+      const { activeKey, tableIds } = yield select(state => state.dsDetail)
+      const tableId = tableIds[activeKey].id
+      const { data } = yield call(_fetchDsLog, tableId)
+      if (data) {
+        yield put({ type: 'setDsLog', payload: data.list })
+      }
+    },
   },
 
   reducers: {
@@ -55,6 +66,9 @@ export default {
     },
     changeActiveKey(state, { payload }) {
       return { ...state, activeKey: payload }
+    },
+    setDsLog(state, { payload }) {
+      return { ...state, dsLog: payload }
     }
   }
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Router, Route, Switch, Redirect } from 'dva/router';
 import dynamic from 'dva/dynamic';
+import _ from 'lodash'
 
 const RouterConfig = ({ history, app }) => {
 
@@ -38,24 +39,43 @@ const RouterConfig = ({ history, app }) => {
     models: () => [import('./models/dsList')]
   })
 
+  const Login = creatDynamic({
+    component: () => import('./routes/Login'),
+    models: () => [import('./models/login')]
+  })
+
   return (
     <Router history={history}>
-      <Route path="/" component={() => {
-        return (
-          <Layout>
-            <Switch>
-              <Route exact path="/" component={() => {
-                return <Redirect to="/dataSource/list" />
-              }} />
-              <Route path="/dataSource/list" component={DsList} />
-              <Route path="/selectDatabase" component={SelectDatabase} />
-              <Route path="/dsDetail/:id" component={DsDetail} />
-              <Route path="/ds/edit/:id" component={DsEdit} />
-              <Route path="/database" component={Database} />
-            </Switch>
-          </Layout>
-        )
-      }} />
+      <Switch>
+        <Route
+          path="/login"
+          component={() => {
+            if (!_.get(app._store.getState().currentUser, 'id', null)) {
+              return (<Redirect to="/login" />)
+            }
+            return <Redirect to="/" />
+          }}
+        />
+        <Route path="/" component={() => {
+          if (!_.get(app._store.getState().currentUser, 'id', null)) {
+            return (<Redirect to="/login" />)
+          }
+          return (
+            <Layout>
+              <Switch>
+                <Route exact path="/" component={() => {
+                  return <Redirect to="/dataSource/list" />
+                }} />
+                <Route path="/dataSource/list" component={DsList} />
+                <Route path="/selectDatabase" component={SelectDatabase} />
+                <Route path="/dsDetail/:id" component={DsDetail} />
+                <Route path="/ds/edit/:id" component={DsEdit} />
+                <Route path="/database" component={Database} />
+              </Switch>
+            </Layout>
+          )
+        }} />
+      </Switch>
     </Router>
   )
 }

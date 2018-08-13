@@ -9,14 +9,49 @@ import Dropdown from 'antd/lib/dropdown'
 import 'antd/lib/dropdown/style/css'
 import Menu from 'antd/lib/menu'
 import 'antd/lib/menu/style/css'
+import Table from 'antd/lib/table'
+import 'antd/lib/table/style/css'
 import DataSourceTable from 'components/DataSourceTable'
 import moment from 'moment'
 import { routerRedux } from 'dva/router'
 import styles from './index.less'
 
 const DsDetail = ({ dsDetail, dispatch }) => {
-  const { dsDetail: dataSource, activeKey, tableIds, dsId } = dsDetail
+  const { dsDetail: dataSource, activeKey, tableIds, dsId, dsLog } = dsDetail
   const { TabPane } = Tabs
+  const logTypeMap = {
+    ADD: '新增',
+    UPDATE: '更新'
+  }
+  const historyColumn = [
+    {
+      title: '更新时间',
+      key: 'created_at',
+      dataIndex: 'created_at',
+      render(text) {
+        return `${moment(text).format('YYYY-MM-DD')} ${moment(text).format('HH:mm:ss')}`
+      }
+    },
+    {
+      title: '更新日志',
+      key: 'content',
+      dataIndex: 'content',
+      render(text, record, index) {
+        if (record.source_type === 0) {
+          return `${logTypeMap[record.operation]} ${_.get(record, 'filename')}`
+        }
+        return `${logTypeMap[record.operation]} ${_.get(record, 'filename')} - ${_.get(record, 'table_name')}`
+      }
+    }
+  ]
+  const historyRecord = (
+    <Table
+      columns={historyColumn}
+      dataSource={dsLog}
+      pagination={false}
+      className={styles.logTable}
+    />
+  )
   const MenuItem = Menu.Item
   const clickMenu = ({ key }) => {
     if (key === 'edit') {
@@ -117,7 +152,7 @@ const DsDetail = ({ dsDetail, dispatch }) => {
           <TabPane tab="数据预览" key="data">
             <DataSourceTable />
           </TabPane>
-          <TabPane tab="历史记录" key="log">111</TabPane>
+          <TabPane tab="历史记录" key="log">{historyRecord}</TabPane>
         </Tabs>
       </div>
     </div>

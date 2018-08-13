@@ -51,3 +51,10 @@ export async function _tranferUser(params, id) {
     body: params
   })
 }
+
+export async function _fetchDsLog(id) {
+  return requestSimple({
+    url: `/table/${id}/logs`,
+    method: 'GET'
+  })
+}
