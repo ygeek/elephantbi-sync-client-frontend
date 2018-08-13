@@ -5,6 +5,16 @@ export default {
 
   state: {
     dsId: null,
+    cycle: 'hour',
+    startTime: '06:00',
+    endTime: '09:00',
+    time: '06:00',
+    week: 'Mon',
+    month: 'Jan',
+    date: 'last',
+    retry: true,
+    retryInterval: '30sec',
+    retryMost: '1'
   },
 
   subscriptions: {
@@ -27,5 +37,8 @@ export default {
     saveDsId(state, { payload }) {
       return { ...state, dsId: payload }
     },
+    changeSyncCycle(state, { payload }) {
+      return { ...state, ...payload }
+    }
   }
 }

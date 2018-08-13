@@ -3,6 +3,8 @@ import { connect } from 'dva'
 import Tabs from 'antd/lib/tabs'
 import 'antd/lib/tabs/style/css'
 import _ from 'lodash'
+import Form from 'antd/lib/form'
+import 'antd/lib/form/style/css'
 import BasicInformation from './content/BasicInformation'
 import AccountInformation from './content/AccountInformation'
 import SynchronizationCycle from './content/SynchronizationCycle'
@@ -10,21 +12,34 @@ import SynchronousMode from './content/SynchronousMode'
 import Footer from '../Upload/Footer'
 import styles from './index.less';
 
-const DsEdit = () => {
+const DsEdit = ({ dsEdit, dispatch, form }) => {
   const { TabPane } = Tabs
   const config = [
     {
       title: '基本信息',
       key: 'basic',
-      component: <BasicInformation />
+      component: (
+        <BasicInformation
+          form={form}
+        />
+      )
     }, {
       title: '帐户信息',
       key: 'account',
-      component: <AccountInformation />
+      component: (
+        <AccountInformation
+          form={form}
+        />
+      )
     }, {
       title: '同步周期',
       key: 'cycle',
-      component: <SynchronizationCycle />
+      component: (
+        <SynchronizationCycle
+          modelState={dsEdit}
+          dispatch={dispatch}
+        />
+      )
     }, {
       title: '同步模式',
       key: 'mode',
@@ -38,6 +53,13 @@ const DsEdit = () => {
           {item.component}
         </TabPane>
       )
+    })
+  }
+  const onSubmit = () => {
+    form.validateFields((errors, values) => {
+      if (!errors) {
+        
+      }
     })
   }
   return (
@@ -56,7 +78,9 @@ const DsEdit = () => {
         text1="取消"
         text2="保存"
         click1={() => {}}
-        click2={() => {}}
+        click2={() => {
+          onSubmit()
+        }}
       />
     </div>
   )
@@ -66,5 +90,5 @@ const mapStateToProps = ({ dsEdit }) => ({
   dsEdit
 })
 
-export default connect(mapStateToProps)(DsEdit)
+export default connect(mapStateToProps)(Form.create()(DsEdit))
 

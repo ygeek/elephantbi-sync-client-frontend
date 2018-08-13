@@ -88,4 +88,4 @@ const BasicInformation = ({ form }) => {
   )
 }
 
-export default Form.create()(BasicInformation) 
+export default BasicInformation

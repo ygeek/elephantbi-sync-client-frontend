@@ -91,5 +91,5 @@ const AccountInformation = ({ form }) => {
   )
 }
 
-export default Form.create()(AccountInformation)
+export default AccountInformation
 

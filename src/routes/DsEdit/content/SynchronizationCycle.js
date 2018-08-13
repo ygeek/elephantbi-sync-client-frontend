@@ -9,8 +9,6 @@ import TimePicker from 'antd/lib/time-picker'
 import 'antd/lib/time-picker/style/css'
 import Radio from 'antd/lib/radio'
 import 'antd/lib/radio/style/css'
-import Form from 'antd/lib/form'
-import 'antd/lib/form/style/css'
 import _ from 'lodash'
 import moment from 'moment'
 import { cycleOptions, weekOption, monthOption, dateOptions, intervalOptions, mostOptions } from '../../Upload/Database/contents/optionsConfig'
@@ -19,35 +17,16 @@ import styles from './index.less'
 const { Option } = Select;
 
 class SynchronizationCycle extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      cycle: 'hour',
-      startTime: '06:00',
-      endTime: '09:00',
-      time: '06:00',
-      week: 'Mon',
-      month: 'Jan',
-      date: 'last',
-      retry: true,
-      retryInterval: '30sec',
-      retryMost: '1'
-    }
-  }
-
   render() {
-    const { form } = this.props
+    const { modelState, dispatch } = this.props
     const getOptions = (options) => {
       return _.map(options, (option) => {
         return <Option key={option.value}>{option.title}</Option>
       })
     }
-    const { cycle, startTime, endTime, time, week, month, date, retry, retryInterval, retryMost } = this.state
+    const { cycle, startTime, endTime, time, week, month, date, retry, retryInterval, retryMost } = modelState
     const changeValue = (value) => {
-      this.setState({
-        ...this.state,
-        ...value
-      })
+      dispatch({ type: 'dsEdit/changeSyncCycle', payload: value })
     }
     return (
       <div className={styles.synchronizationCycle}>
@@ -230,4 +209,4 @@ class SynchronizationCycle extends React.Component {
   }
 }
 
-export default Form.create()(SynchronizationCycle)
+export default SynchronizationCycle
