@@ -75,7 +75,7 @@ class EditComponent extends React.Component {
   }
 
   changeTableToColumns() {
-    const { columns, serial, tableName } = this.props;
+    const { serial, tableName } = this.props;
     const { changeType, changeName } = this.state;
     if (changeName === '') {
       return;
@@ -85,7 +85,7 @@ class EditComponent extends React.Component {
       Object.assign(params, { data_type: changeType })
     }
     if (changeName !== null) {
-      Object.assign(params, { name: changeName }, { nick_name: changeName })
+      Object.assign(params, { nick_name: changeName })
     }
     this.props.changeTableToColumns({ tableName, serial, params })
     this.resetState()

@@ -58,3 +58,13 @@ export async function _fetchDsLog(id) {
     method: 'GET'
   })
 }
+
+export async function _changeColumns(columns) {
+  return requestSimple({
+    url: '',
+    method: 'POST',
+    body: {
+      columns
+    }
+  })
+}

@@ -9,6 +9,8 @@ import Dropdown from 'antd/lib/dropdown'
 import 'antd/lib/dropdown/style/css'
 import Menu from 'antd/lib/menu'
 import 'antd/lib/menu/style/css'
+import Modal from 'antd/lib/modal'
+import 'antd/lib/modal/style/css'
 import Table from 'antd/lib/table'
 import 'antd/lib/table/style/css'
 import DataSourceTable from 'components/DataSourceTable'
@@ -17,8 +19,14 @@ import { routerRedux } from 'dva/router'
 import styles from './index.less'
 
 const DsDetail = ({ dsDetail, dispatch }) => {
-  const { dsDetail: dataSource, activeKey, tableIds, dsId, dsLog } = dsDetail
+  const { dsDetail: dataSource, activeKey, tableIds, dsId, dsLog, currentTable } = dsDetail
+  const currentColumns = _.get(currentTable, 'columns', [])
+  const currentRecords = _.get(currentTable, 'records', [])
+  const currentTableName = _.get(currentTable, 'table_name')
   const { TabPane } = Tabs
+  const changeColumns = (payload) => {
+    dispatch({ type: 'dsDetail/changeColumns', payload })
+  }
   const logTypeMap = {
     ADD: '新增',
     UPDATE: '更新'
@@ -56,6 +64,17 @@ const DsDetail = ({ dsDetail, dispatch }) => {
   const clickMenu = ({ key }) => {
     if (key === 'edit') {
       dispatch(routerRedux.push(`/ds/edit/${dsId}`))
+    }
+    if (key === 'delete') {
+      Modal.confirm({
+        title: '删除数据源',
+        content: '若删除数据源，关联工作表和卡片将一并删除，是否确认删除',
+        okText: '确认',
+        cancelText: '取消',
+        onOk() {
+          dispatch({ type: 'dsDetail/deleteDs' })
+        }
+      })
     }
   }
   const operateMenu = (
@@ -150,7 +169,13 @@ const DsDetail = ({ dsDetail, dispatch }) => {
           onChange={() => {}}
         >
           <TabPane tab="数据预览" key="data">
-            <DataSourceTable />
+            <DataSourceTable
+              columns={currentColumns}
+              dataSource={currentRecords}
+              tableName={currentTableName}
+              tableToColumns={currentColumns}
+              changeTableToColumns={changeColumns}
+            />
           </TabPane>
           <TabPane tab="历史记录" key="log">{historyRecord}</TabPane>
         </Tabs>

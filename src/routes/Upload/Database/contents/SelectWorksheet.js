@@ -54,7 +54,7 @@ class SelectWorksheet extends React.Component {
 
 
   render() {
-    const { dataSource, dispatch, sublimeData, changeTableToColumns, goPrev, goAfter, filterTableNames } = this.props;
+    const { dataSource, sublimeData, changeTableToColumns, goPrev, goAfter, filterTableNames } = this.props;
     const { activeKey } = this.state;
     const currentDataSource = _.get(dataSource[activeKey], 'records', [])
     const currentColumn = _.get(dataSource[activeKey], 'columns', [])
@@ -109,7 +109,6 @@ class SelectWorksheet extends React.Component {
             dataSource={currentDataSource}
             tableName={currentTableName}
             tableToColumns={_.get(sublimeData, `table_to_columns[${currentTableName}]`)}
-            dispatch={dispatch}
             changeTableToColumns={changeTableToColumns}
           />
         </div>

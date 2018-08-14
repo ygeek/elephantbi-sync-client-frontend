@@ -1,5 +1,7 @@
 import pathToRegexp from 'path-to-regexp';
-import { _fetchDsDetail, _fetchTableIds, _fetchDsLog } from '../services/dataSource'
+import _ from 'lodash'
+import { routerRedux } from 'dva/router'
+import { _fetchDsDetail, _fetchTableIds, _fetchDsLog, _changeColumns, _deleteDs } from '../services/dataSource'
 
 export default {
   namespace: 'dsDetail',
@@ -10,6 +12,7 @@ export default {
     activeKey: '0',
     dsDetail: null,
     dsLog: [],
+    currentTable: null,
   },
 
   subscriptions: {
@@ -41,6 +44,8 @@ export default {
       const { data } = yield call(_fetchDsDetail, dsId, { table_id: tableId })
       if (data) {
         yield put({ type: 'saveDsDetail', payload: data })
+        const table = _.get(data, 'tables[0]');
+        yield put({ type: 'saveCurrentTable', payload: table })
       }
     },
 
@@ -52,6 +57,28 @@ export default {
         yield put({ type: 'setDsLog', payload: data.list })
       }
     },
+    * changeColumns({ payload }, { select, call, put }) {
+      const { params, serial } = payload;
+      const { currentTable } = yield select(state => state.dsDetail)
+      const originColumn = _.get(currentTable, 'columns', [])
+      const newColumns = originColumn.map((column, index) => {
+        if (index !== serial) {
+          return column
+        }
+        return { ...column, ...params }
+      })
+      const { data } = yield call(_changeColumns, newColumns)
+      if (data) {
+        yield put({ type: 'fetchDsDetail' })
+      }
+    },
+    * deleteDs(action, { select, call, put }) {
+      const { dsId } = yield select(state => state.dsDetail)
+      const { data } = yield call(_deleteDs, dsId)
+      if (data) {
+        yield put(routerRedux.push('/dataSource/list'))
+      }
+    }
   },
 
   reducers: {
@@ -69,6 +96,9 @@ export default {
     },
     setDsLog(state, { payload }) {
       return { ...state, dsLog: payload }
+    },
+    saveCurrentTable(state, { payload }) {
+      return { ...state, currentTable: payload }
     }
   }
 }

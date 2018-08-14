@@ -7,8 +7,6 @@ const DataSourceTable = ({
   tableName,
   dataSource,
   columns,
-  sublimeData,
-  dispatch,
   tableToColumns,
   changeTableToColumns
 }) => {
