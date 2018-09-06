@@ -24,8 +24,15 @@ class SelectWorksheet extends React.Component {
     this.onCheckAllChange = this.onCheckAllChange.bind(this)
   }
 
-  changeActiveKey(activeKey) {
-    this.setState({ activeKey })
+  UNSAFE_componentWillMount() {
+    const { sublimeData, filterTableList } = this.props;
+    const tableNames = _.get(sublimeData, 'table_names', []);
+    const plainOptions = tableNames.map(item => item.old_table_name)
+    this.setState({
+      checkedList: filterTableList,
+      indeterminate: false,
+      checkAll: filterTableList.length === plainOptions.length
+    });
   }
 
   onChange(checkedList) {
@@ -36,7 +43,7 @@ class SelectWorksheet extends React.Component {
     this.setState({
       checkedList,
       indeterminate: !!checkedList.length && (checkedList.length < plainOptions.length),
-      checkAll: checkedList.length === plainOptions.length,
+      checkAll: checkedList.length === plainOptions.length
     });
   }
 
@@ -48,13 +55,23 @@ class SelectWorksheet extends React.Component {
     this.setState({
       checkedList: e.target.checked ? plainOptions : [],
       indeterminate: false,
-      checkAll: e.target.checked,
+      checkAll: e.target.checked
     });
+  }
+
+  changeActiveKey(activeKey) {
+    this.setState({ activeKey })
   }
 
 
   render() {
-    const { dataSource, sublimeData, changeTableToColumns, goPrev, goAfter, filterTableNames } = this.props;
+    const {
+      dataSource,
+      sublimeData,
+      changeTableToColumns,
+      goPrev,
+      goAfter
+    } = this.props;
     const { activeKey } = this.state;
     const currentDataSource = _.get(dataSource[activeKey], 'records', [])
     const currentColumn = _.get(dataSource[activeKey], 'columns', [])
@@ -63,62 +80,63 @@ class SelectWorksheet extends React.Component {
     return (
       <Row className={styles.selectWorksheet}>
         <div className={styles.wrapper}>
-        <div className={styles.checkboxGroup}>
-          <div className={styles.checkItem}>
-            <Checkbox
-              indeterminate={this.state.indeterminate}
-              onChange={this.onCheckAllChange}
-              checked={this.state.checkAll}
-            >
+          <div className={styles.checkboxGroup}>
+            <div className={styles.checkItem}>
+              <Checkbox
+                indeterminate={this.state.indeterminate}
+                onChange={this.onCheckAllChange}
+                checked={this.state.checkAll}
+              >
                 全部
-            </Checkbox>
-          </div>
-          <CheckboxGroup
-            onChange={this.onChange}
-            value={this.state.checkedList}
-          >
-            {
-              tableNames.map((item, index) => (
-                <div
-                  className={styles.checkItem}
-                  key={index}
-                >
-                  <Checkbox
-                    value={item.old_table_name}
+              </Checkbox>
+            </div>
+            <CheckboxGroup
+              onChange={this.onChange}
+              value={this.state.checkedList}
+            >
+              {
+                tableNames.map((item, index) => (
+                  <button
+                    className={styles.checkItem}
+                    key={index}
+                    onClick={() => {
+                      this.changeActiveKey(`${index}`)
+                    }}
                   >
-                    <button
-                      className={styles.checkButton}
-                      style={activeKey === `${index}` ? { borderBottom: '1px solid #1890ff' } : null}
-                      onClick={() => {
-                        this.changeActiveKey(`${index}`)
+                    <Checkbox
+                      value={item.old_table_name}
+                      onClick={(e) => {
+                        e.stopPropagation()
                       }}
+                    />
+                    <span
+                      className={styles.checkButton}
+                      style={activeKey === `${index}` ? { color: '#1890ff' } : null}
                     >
                       {item.old_table_name}
-                    </button>
-                  </Checkbox>
-                </div>
-              ))
-            }
-          </CheckboxGroup>
-        </div>
-        <div
-          className={styles.dataTable}
-        >
-          <DataSourceTable
-            columns={currentColumn}
-            dataSource={currentDataSource}
-            tableName={currentTableName}
-            tableToColumns={_.get(sublimeData, `table_to_columns[${currentTableName}]`)}
-            changeTableToColumns={changeTableToColumns}
-          />
-        </div>
+                    </span>
+                  </button>
+                ))
+              }
+            </CheckboxGroup>
+          </div>
+          <div
+            className={styles.dataTable}
+          >
+            <DataSourceTable
+              columns={currentColumn}
+              dataSource={currentDataSource}
+              tableName={currentTableName}
+              tableToColumns={_.get(sublimeData, `table_to_columns[${currentTableName}]`)}
+              changeTableToColumns={changeTableToColumns}
+            />
+          </div>
         </div>
         <Footer
           text1="上一步"
           text2="下一步"
           click1={goPrev}
           click2={() => {
-            filterTableNames();
             goAfter();
           }}
         />

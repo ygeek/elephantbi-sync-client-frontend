@@ -11,7 +11,7 @@ import Menu from 'antd/lib/menu'
 import 'antd/lib/menu/style/css'
 import Modal from 'antd/lib/modal'
 import 'antd/lib/modal/style/css'
-import { syncStatus } from '../config'
+import { syncStatus, dslistMap } from '../config'
 import { databaseConfig } from '../Upload/SelectDatabase/config'
 import styles from './index.less'
 
@@ -118,28 +118,29 @@ const DsListItem = ({
     <div className={styles.dsListItem}>
       <div className={styles.content}>
         <div className={styles.mainInfo}>
-          <img alt="" src={null} className={styles.typeIcon} />
+          <img alt="" src={dslistMap[`${data.source_type}`].icon} className={styles.typeIcon} />
           <div className={styles.infoDetail}>
             <div className={styles.name}>{_.get(data, 'name')}</div>
-            <div className={styles.description}>{`${databaseConfig[_.get(data, 'source_type')]['name']} - 客户端连接`}</div>
+            <div className={styles.description}>{`${dslistMap[_.get(data, 'source_type')]['name']} - 客户端连接`}</div>
           </div>
         </div>
         <div className={styles.dataInfo}>
           <div className={styles.infoItem}>
             <div className={styles.infoTitle}>工作表</div>
-            <div className={styles.infoContent}>{`${_.get(data, 'charts_count', 0)}个`}</div>
+            <div className={styles.infoContent}>{`${_.get(data, 'worksheet_count', 0)}个`}</div>
           </div>
           <div className={styles.infoItem}>
             <div className={styles.infoTitle}>行数</div>
             <div className={styles.infoContent}>{`${_.get(data, 'size', 0)}行`}</div>
           </div>
-          <div className={styles.infoItem}>
+          <div className={styles.infoItem} style={{ width: '120px' }}>
             <div className={styles.infoTitle}>最近更新</div>
-            <div className={styles.infoContent}>{moment(_.get(data, 'update_at')).format('YYYY/MM/DD HH:mm:ss')}</div>
+            <div className={styles.infoContent}>{moment(_.get(data, 'updated_at')).format('YYYY/MM/DD HH:mm:ss')}</div>
           </div>
-          <div className={styles.infoItem}>
-            <div className={styles.infoTitle}>同步状态</div>
-            <div className={styles.infoContent}>{syncStatus[_.get(data, 'sync_status')]}</div>
+          <div className={styles.syncInfoItem}>
+            <img alt="" src={syncStatus[_.get(data, 'sync_status')].icon} />
+            <div className={styles.syncInfoTitle}>同步状态</div>
+            <div className={styles.syncInfoContent}>{syncStatus[_.get(data, 'sync_status')].name}</div>
           </div>
         </div>
         <button

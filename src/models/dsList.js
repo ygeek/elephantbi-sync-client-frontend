@@ -15,7 +15,7 @@ export default {
     list: [],
     pageInfo: {
       page: 1,
-      pageSize: 20
+      pageSize: 12
     },
     canSync: [],
     users: [],
@@ -69,7 +69,7 @@ export default {
       });
       if (data) {
         const dsList = _.get(data, 'list', [])
-        yield put({ type: 'saveDsList', payload: dsList })
+        yield put({ type: 'saveDsList', payload: { [data.meta.current_page]: dsList} })
       }
     },
     * deleteDs({ payload: id }, { select, call, put }) {
@@ -102,7 +102,9 @@ export default {
 
   reducers: {
     saveDsList(state, { payload }) {
-      return { ...state, list: payload }
+      return {
+        ...state,
+        list: { ...state.list, ...payload }}
     },
     saveCanSync(state, { payload }) {
       return { ...state, canSync: payload }

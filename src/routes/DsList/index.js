@@ -40,6 +40,11 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
       }
     })
   }
+  let data = []
+  _.forEach(list, (value, key) => {
+    data = [...data, ...value]
+  })
+
   const showTransfer = (id) => {
     dispatch({ type: 'dsList/setCurrentTransferId', payload: id })
     dispatch({ type: 'dsList/showTransferModal' })
@@ -60,7 +65,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
     dispatch({ type: 'dsList/hideTransferModal' })
   }
   const getDsList = () => {
-    return _.map(list, (listItem, index) => {
+    return _.map(data, (listItem, index) => {
       const id = _.get(listItem, 'id')
       const checked = canSync.includes(id);
       return (

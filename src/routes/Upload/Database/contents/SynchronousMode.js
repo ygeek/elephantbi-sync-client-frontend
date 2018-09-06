@@ -20,13 +20,18 @@ const formLayout = {
   wrapperCol: { span: 16, offset: 2 }
 }
 
-const SynchronousMode = ({ sublimeData, changeSyncInfo, goPrev }) => {
+const SynchronousMode = ({ sublimeData, changeSyncInfo, goPrev, createDs }) => {
   const tableNames = _.get(sublimeData, 'table_names', [])
   const tableToColumns = _.get(sublimeData, 'table_to_columns', {})
-  const syncInfo = _.get(sublimeData, 'sync_info', {})
+  const syncInfo = _.get(sublimeData, 'sync_mode', {})
   const getOption = (options) => {
     return _.map(options, (option) => {
       return <Option key={option.value || option.name}>{option.title || option.name}</Option>
+    })
+  }
+  const getColumnOption = (columns) => {
+    return _.map(columns, (option) => {
+      return <Option key={option.unique_id}>{option.name}</Option>
     })
   }
   const renderForm = ({ columns, oldName, serial }) => {
@@ -37,27 +42,30 @@ const SynchronousMode = ({ sublimeData, changeSyncInfo, goPrev }) => {
           {...formLayout}
         >
           <Select
-            value={_.get(syncInfo, `${oldName}.sync_mode`)}
+            value={_.get(syncInfo, `${oldName}.mode`)}
             onChange={(val) => {
-              changeSyncInfo(oldName, { sync_mode: val })
+              changeSyncInfo(oldName, { mode: val })
             }}
           >
             {getOption(syncModeOptions)}
           </Select>
         </FormItem>
         {
-          _.get(syncInfo, `${oldName}.sync_mode`) !== 'all' ? (
+          _.get(syncInfo, `${oldName}.mode`) !== '0' ? (
             <FormItem
               label="递增列"
               {...formLayout}
             >
               <Select
-                value={_.get(syncInfo, `${oldName}.column`)}
+                value={_.get(syncInfo, `${oldName}.by_col_uuid`)}
                 onChange={(val) => {
-                  changeSyncInfo(oldName, { column: val })
+                  changeSyncInfo(oldName, {
+                    by_col_uuid: val,
+                    by_col_name: _.get(_.find(columns, { unique_id: val }), 'name')
+                  })
                 }}
               >
-                {getOption(columns)}
+                {getColumnOption(columns)}
               </Select>
             </FormItem>
           ) : null
@@ -91,6 +99,7 @@ const SynchronousMode = ({ sublimeData, changeSyncInfo, goPrev }) => {
         text1="上一步"
         text2="完成"
         click1={goPrev}
+        click2={createDs}
       />
     </div>
   )

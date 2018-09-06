@@ -22,10 +22,14 @@ const BasicInformation = ({
   goPrev,
   goAfter,
   changeFileName,
-  changeDescription
+  changeDescription,
+  filterTableList
 }) => {
   const { getFieldDecorator } = form
   const tableNames = _.get(sublimeData, 'table_names', [])
+  const filtertables = filterTableList.map((item) => {
+    return _.find(tableNames, { old_table_name: item })
+  })
   const getTableNameItems = () => {
     return (
       <table className={styles.sheetTable}>
@@ -34,7 +38,7 @@ const BasicInformation = ({
         </thead>
         <tbody>
           {
-            _.map(tableNames, (table, index) => {
+            _.map(filtertables, (table, index) => {
               return (
                 <tr key={index}>
                   <td>{_.get(table, 'old_table_name')}</td>
@@ -78,7 +82,7 @@ const BasicInformation = ({
         >
           {
             getFieldDecorator('source_type')(
-              <span>{_.get(_.find(databaseConfig, { source_type: sourceType }), 'name')}</span>
+              <span>{_.get(_.find(databaseConfig, { source_type: parseInt(sourceType, 10) }), 'name')}</span>
             )
           }
         </FormItem>

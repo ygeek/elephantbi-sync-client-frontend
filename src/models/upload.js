@@ -1,6 +1,7 @@
 import pathToRegexp from 'path-to-regexp';
 import _ from 'lodash'
-import { _connectDatabase, _fetchDbDataSource } from 'services/upload'
+import { routerRedux } from 'dva/router'
+import { _connectDatabase, _fetchDbDataSource, _saveDataSource } from 'services/upload'
 
 export default {
   namespace: 'upload',
@@ -12,16 +13,22 @@ export default {
     databaseInfo: null,
     dataSource: null,
     sublimeData: null,
-    tableInfo: null,
+    tableColumns: null,
     description: null,
+    dbType: null
   },
 
   subscriptions: {
     setup({ dispatch, history }) {
       history.listen((location) => {
-        const { pathname } = location;
+        const { pathname, search } = location;
         const match1 = pathToRegexp('/selectDatabase').exec(pathname);
         const match2 = pathToRegexp('/database').exec(pathname);
+        if (search) {
+          const matchSearch = search.match(/dbType=(.*)&sourceType=(.*)/)
+          dispatch({ type: 'setDbType', payload: matchSearch[1] })
+          dispatch({ type: 'setSourceType', payload: matchSearch[2] })
+        }
         if (!match1 && !match2) {
           dispatch({ type: 'resetState' })
         }
@@ -31,20 +38,47 @@ export default {
 
   effects: {
     * connectDatabase(action, { select, call, put }) {
-      const { databaseInfo } = yield select(state => state.upload);
-      const { data, err } = yield call(_connectDatabase, databaseInfo);
+      const { databaseInfo, dbType } = yield select(state => state.upload);
+      const { data, err } = yield call(_connectDatabase, {
+        ...databaseInfo,
+        db_type: `${dbType}`
+      });
       if (data) {
-        yield put({ type: 'saveTableInfo', payload: data })
+        yield put({ type: 'saveTableColumns', payload: data })
         yield put({ type: 'fetchdbDataSource' })
       }
     },
 
     * fetchdbDataSource(action, { select, call, put }) {
-      const { databaseInfo } = yield select(state => state.upload)
-      const { data, err } = yield call(_fetchDbDataSource, databaseInfo)
+      const { databaseInfo, dbType } = yield select(state => state.upload)
+      const { data, err } = yield call(_fetchDbDataSource, {
+        ...databaseInfo,
+        db_type: `${dbType}`
+      })
       if (data) {
         yield put({ type: 'saveDataSource', payload: data })
         yield put({ type: 'changeStep', payload: 'after' })
+      }
+    },
+
+    * createDbDs(action, { select, call, put }) {
+      const {
+        databaseInfo,
+        sublimeData,
+        dbType,
+        sourceType,
+        filterTableList
+      } = yield select(state => state.upload)
+      const params = {
+        ...databaseInfo,
+        db_type: dbType,
+        source_type: sourceType,
+        ...sublimeData,
+        table_info: _.get(sublimeData, 'table_names').filter(item => filterTableList.includes(item.old_table_name))
+      }
+      const { data, err } = yield call(_saveDataSource, params)
+      if (data) {
+        yield put(routerRedux.push('/dataSource/list'))
       }
     }
   },
@@ -65,30 +99,40 @@ export default {
     setDatabaseInfo(state, { payload }) {
       return { ...state, databaseInfo: payload }
     },
-    saveTableInfo(state, { payload }) {
-      return { ...state, tableInfo: payload }
+    saveTableColumns(state, { payload }) {
+      return { ...state, tableColumns: payload }
     },
     saveDataSource(state, { payload }) {
-      const tableData = _.get(payload, 'preview')
-      const tableInfo = _.get(state, 'tableInfo')
+      const tableData = payload
+      const tableColumns = _.get(state, 'tableColumns', [])
       const tableNames = []
       const tableToColumns = {}
-      const sync_info = {}
-      tableData.forEach((item) => {
+      const sync_mode = {}
+      const allTableData = tableColumns.map((item, index) => {
+        return {
+          ...item,
+          ...tableData[index]
+        }
+      })
+      const filterTableList = []
+      allTableData.forEach((item) => {
         tableNames.push({ new_table_name: item.table_name, old_table_name: item.table_name })
         Object.assign(tableToColumns, { [item.table_name]: item.columns })
-        Object.assign(sync_info, { [item.table_name]: { sync_mode: 'all', column: null } })
+        Object.assign(sync_mode, { [item.table_name]: { mode: '0', by_col_name: null, by_col_uuid: null } })
+        filterTableList.push(item.table_name)
       })
+
       return {
         ...state,
-        dataSource: payload,
+        dataSource: allTableData,
         sublimeData: {
-          name: _.get(tableInfo, 'origin_name'),
+          name: null,
           description: _.get(state, 'description'),
           table_names: tableNames,
           table_to_columns: tableToColumns,
-          sync_info
-        }
+          sync_mode
+        },
+        filterTableList
       }
     },
 
@@ -127,11 +171,11 @@ export default {
         ...state,
         sublimeData: {
           ...state.sublimeData,
-          sync_info: {
-            ...state.sublimeData.sync_info,
+          sync_mode: {
+            ...state.sublimeData.sync_mode,
             [name]: {
-              ...state.sublimeData.sync_info[name],
-              ...params,
+              ...state.sublimeData.sync_mode[name],
+              ...params
             }
           }
         }
@@ -180,6 +224,12 @@ export default {
           ...state.sublimeData,
           ...payload
         }
+      }
+    },
+    setDbType(state, { payload }) {
+      return {
+        ...state,
+        dbType: payload
       }
     }
   }

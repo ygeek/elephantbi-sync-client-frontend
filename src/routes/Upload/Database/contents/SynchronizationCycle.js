@@ -21,16 +21,16 @@ class SynchronizationCycle extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      cycle: 'hour',
-      startTime: '06:00',
-      endTime: '09:00',
-      time: '06:00',
-      week: 'Mon',
-      month: 'Jan',
-      date: 'last',
-      retry: true,
-      retryInterval: '30sec',
-      retryMost: '1'
+      freq: 'hourly',
+      sync_starts_time: '06:00',
+      sync_ends_time: '09:00',
+      sync_at_time: '06:00',
+      sync_at_weekday: '1',
+      sync_at_month: '1',
+      sync_at_day: 'LAST_DAY',
+      retry_on_fail: 1,
+      retry_interval: '30',
+      max_retry: '1'
     }
   }
 
@@ -41,7 +41,18 @@ class SynchronizationCycle extends React.Component {
         return <Option key={option.value}>{option.title}</Option>
       })
     }
-    const { cycle, startTime, endTime, time, week, month, date, retry, retryInterval, retryMost } = this.state
+    const {
+      freq,
+      sync_starts_time: startTime,
+      sync_ends_time: endTime,
+      sync_at_time: time,
+      sync_at_weekday: week,
+      sync_at_month: month,
+      sync_at_day: date,
+      retry_on_fail: retryOnFail,
+      retry_interval: retryInterval,
+      max_retry: maxRetry
+    } = this.state
     const changeValue = (value) => {
       this.setState({
         ...this.state,
@@ -57,15 +68,15 @@ class SynchronizationCycle extends React.Component {
               <Col span={18}>
                 <Select
                   style={{ width: '300px' }}
-                  value={cycle}
-                  onChange={(val) => { changeValue({ cycle: val }) }}
+                  value={freq}
+                  onChange={(val) => { changeValue({ freq: val }) }}
                 >
                   {getOptions(cycleOptions)}
                 </Select>
               </Col>
             </Row>
             {
-              cycle === 'hour' ? (
+              freq === 'hourly' ? (
                 <Row align="middle" type="flex">
                   <Col span={6}>介于：</Col>
                   <Col span={18}>
@@ -75,7 +86,7 @@ class SynchronizationCycle extends React.Component {
                       style={{ width: '90px' }}
                       placeholder=""
                       value={moment(startTime, 'HH:mm a')}
-                      onChange={(time, timeString) => { changeValue({ startTime: timeString }) }}
+                      onChange={(time, timeString) => { changeValue({ sync_starts_time: timeString }) }}
                     />
                     <span className={styles.divider}>~</span>
                     <TimePicker
@@ -84,14 +95,14 @@ class SynchronizationCycle extends React.Component {
                       style={{ width: '90px' }}
                       placeholder=""
                       value={moment(endTime, 'HH:mm a')}
-                      onChange={(time, timeString) => { changeValue({ endTime: timeString }) }}
+                      onChange={(time, timeString) => { changeValue({ sync_ends_time: timeString }) }}
                     />
                   </Col>
                 </Row>
               ) : null
             }
             {
-              cycle === 'day' || cycle === 'workday' ? (
+              freq === 'daily' || freq === 'workday' ? (
                 <Row align="middle" type="flex">
                   <Col span={6}>在：</Col>
                   <Col span={18}>
@@ -101,21 +112,21 @@ class SynchronizationCycle extends React.Component {
                       style={{ width: '90px' }}
                       placeholder=""
                       value={moment(time, 'HH:mm a')}
-                      onChange={(time, timeString) => { changeValue({ time: timeString }) }}
+                      onChange={(time, timeString) => { changeValue({ sync_at_time: timeString }) }}
                     />
                   </Col>
                 </Row>
               ) : null
             }
             {
-              cycle === 'week' ? (
+              freq === 'weekly' ? (
                 <Row align="middle" type="flex">
                   <Col span={6}>在：</Col>
                   <Col span={18}>
                     <Select
                       style={{ width: '90px' }}
                       value={week}
-                      onChange={(val) => { changeValue({ week: val }) }}
+                      onChange={(val) => { changeValue({ sync_at_weekday: val }) }}
                     >{getOptions(weekOption)}</Select>
                     <span className={styles.divider}>~</span>
                     <TimePicker
@@ -124,21 +135,21 @@ class SynchronizationCycle extends React.Component {
                       style={{ width: '90px' }}
                       placeholder=""
                       value={moment(time, 'HH:mm a')}
-                      onChange={(time, timeString) => { changeValue({ time: timeString }) }}
+                      onChange={(time, timeString) => { changeValue({ sync_at_time: timeString }) }}
                     />
                   </Col>
                 </Row>
               ) : null
             }
             {
-              cycle === 'month' ? (
+              freq === 'monthly' ? (
                 <Row align="middle" type="flex">
                   <Col span={6}>在：</Col>
                   <Col span={18}>
                     <Select
                       style={{ width: '90px' }}
                       value={date}
-                      onChange={(val) => { changeValue({ date: val }) }}
+                      onChange={(val) => { changeValue({ sync_at_day: val }) }}
                     >{getOptions(dateOptions)}</Select>
                     <span className={styles.divider}>~</span>
                     <TimePicker
@@ -147,27 +158,27 @@ class SynchronizationCycle extends React.Component {
                       style={{ width: '90px' }}
                       placeholder=""
                       value={moment(time, 'HH:mm a')}
-                      onChange={(time, timeString) => { changeValue({ time: timeString }) }}
+                      onChange={(time, timeString) => { changeValue({ sync_at_time: timeString }) }}
                     />
                   </Col>
                 </Row>
               ) : null
             }
             {
-              cycle === 'year' ? (
+              freq === 'yearly' ? (
                 <Row align="middle" type="flex">
                   <Col span={6}>在：</Col>
                   <Col span={18}>
                     <Select
                       style={{ width: '90px' }}
                       value={month}
-                      onChange={(val) => { changeValue({ month: val }) }}
+                      onChange={(val) => { changeValue({ sync_at_month: val }) }}
                     >{getOptions(monthOption)}</Select>
                     <span className={styles.divider}>~</span>
                     <Select
                       style={{ width: '90px' }}
                       value={date}
-                      onChange={(val) => { changeValue({ date: val }) }}
+                      onChange={(val) => { changeValue({ sync_at_day: val }) }}
                     >{getOptions(dateOptions)}</Select>
                     <span className={styles.divider}>~</span>
                     <TimePicker
@@ -176,7 +187,7 @@ class SynchronizationCycle extends React.Component {
                       style={{ width: '90px' }}
                       placeholder=""
                       value={moment(time, 'HH:mm a')}
-                      onChange={(time, timeString) => { changeValue({ time: timeString }) }}
+                      onChange={(time, timeString) => { changeValue({ sync_at_time: timeString }) }}
                     />
                   </Col>
                 </Row>
@@ -184,9 +195,9 @@ class SynchronizationCycle extends React.Component {
             }
             <Row>
               <Radio
-                checked={retry}
+                checked={retryOnFail}
                 onChange={(checked) => {
-                  changeValue({ retry: checked })
+                  changeValue({ retry_on_fail: checked ? 1 : 0 })
                 }}
               >
                 如果不成功，重试
@@ -198,7 +209,7 @@ class SynchronizationCycle extends React.Component {
                 <Select
                   value={retryInterval}
                   style={{ width: '300px' }}
-                  onChange={(val) => { changeValue({ retryInterval: val }) }}
+                  onChange={(val) => { changeValue({ retry_interval: val }) }}
                 >
                   {getOptions(intervalOptions)}
                 </Select>
@@ -208,9 +219,9 @@ class SynchronizationCycle extends React.Component {
               <Col span={6}>至多重试：</Col>
               <Col span={18}>
                 <Select
-                  value={retryMost}
+                  value={maxRetry}
                   style={{ width: '300px' }}
-                  onChange={(val) => { changeValue({ retryMost: val }) }}
+                  onChange={(val) => { changeValue({ max_retry: val }) }}
                 >
                   {getOptions(mostOptions)}
                 </Select>
@@ -218,9 +229,9 @@ class SynchronizationCycle extends React.Component {
             </Row>
             <Row>
               <Radio
-                checked={!retry}
+                checked={!retryOnFail}
                 onChange={(checked) => {
-                  changeValue({ retry: !checked })
+                  changeValue({ retry_on_fail: !checked ? 1 : 0 })
                 }}
               >
                 如果不成功，不重试
@@ -233,7 +244,20 @@ class SynchronizationCycle extends React.Component {
           text2="下一步"
           click1={goPrev}
           click2={() => {
-            submitSyncCycle(this.state);
+            const {
+              freq,
+              retry_on_fail: retryOnFail,
+              retry_interval: retryInterval,
+              max_retry: maxRetry,
+              ...schedule
+            } = this.state
+            submitSyncCycle({
+              freq,
+              retry_on_fail: retryOnFail,
+              retry_interval: retryInterval,
+              max_retry: maxRetry,
+              schedule
+            });
             goAfter();
           }}
         />

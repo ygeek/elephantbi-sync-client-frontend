@@ -34,8 +34,10 @@ export default {
       const { data } = yield call(_fetchTableIds, dsId)
       if (data) {
         yield put({ type: 'saveTableIds', payload: data })
-        yield put({ type: 'fetchDsDetail' })
-        yield put({ type: 'fetchDsLog' })
+        if (data.length > 0) {
+          yield put({ type: 'fetchDsDetail' })
+          yield put({ type: 'fetchDsLog' })
+        }
       }
     },
     * fetchDsDetail(action, { select, call, put }) {

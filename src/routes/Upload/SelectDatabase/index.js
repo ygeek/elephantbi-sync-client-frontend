@@ -13,19 +13,22 @@ import styles from './index.less';
 class SelectDatabase extends React.Component {
   render() {
     const { dispatch, upload } = this.props;
+    const dbType = _.get(upload, 'dbType')
     const sourceType = _.get(upload, 'sourceType')
     const renderItems = (list) => {
       return list.map((item, index) => {
-        const type = _.get(item, 'source_type')
+        const type = _.get(item, 'db_type')
+        const sourceType = _.get(item, 'source_type')
         const click = () => {
-          dispatch({ type: 'upload/setSourceType', payload: type })
+          dispatch({ type: 'upload/setDbType', payload: type })
+          dispatch({ type: 'upload/setSourceType', payload: sourceType })
         }       
         return (
           <DatabaseItem
             key={index}
             data={item}
             click={click}
-            checked={sourceType === type}
+            checked={dbType === type}
           />
         )
       })
@@ -47,7 +50,7 @@ class SelectDatabase extends React.Component {
             dispatch(routerRedux.push('/'))
           }}
           click2={() => {
-            if (!sourceType) {
+            if (sourceType === null) {
               Modal.warning({
                 title: '选择数据库',
                 content: '请选择一种数据库',
@@ -55,7 +58,10 @@ class SelectDatabase extends React.Component {
               })
               return;
             }
-            dispatch(routerRedux.push('/database'))
+            dispatch(routerRedux.push({
+              pathname: '/database',
+              search: `dbType=${dbType}&sourceType=${sourceType}`
+            }))
           }}
         />
       </div>

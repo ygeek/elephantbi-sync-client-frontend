@@ -51,7 +51,7 @@ const RouterConfig = ({ history, app }) => {
           path="/login"
           component={() => {
             if (!_.get(app._store.getState().currentUser, 'id', null)) {
-              return (<Redirect to="/login" />)
+              return <Login />
             }
             return <Redirect to="/" />
           }}

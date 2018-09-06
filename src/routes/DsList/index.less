@@ -56,25 +56,42 @@
     display: inline-block;
     position: absolute;
     top: 30px;
-    right: 150px;
+    right: 200px;
     .infoItem {
       display: inline-block;
       margin-right: 20px;
       height: 40px;
-      width: 120px;
+      width: 60px;
       position: relative;
-      .infoTitle {
-        color: #999;
+    }
+    .infoTitle {
+      color: #999;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+    }
+    .infoContent {
+      position: absolute;
+      bottom: 0px;
+      left: 0px;
+    }
+    .syncInfoItem {
+      .infoItem;
+      width: 120px;
+      img {
         position: absolute;
-        top: 0px;
         left: 0px;
-        width: 100%;
+        top: 9px;
       }
-      .infoContent {
-        position: absolute;
-        bottom: 0px;
-        left: 0px;
-      }
+    }
+    .syncInfoTitle {
+      .infoTitle;
+      left: 30px;
+    }
+    .syncInfoContent {
+      .infoContent;
+      left: 30px;
     }
   }
 

@@ -96,7 +96,7 @@ class EditComponent extends React.Component {
     const { columns, serial } = this.props
     const currentColumn = _.get({ columns }, `columns[${serial}]`)
     const dataType = _.get(currentColumn, 'data_type')
-    const name = _.get(currentColumn, 'name')
+    const name = _.get(currentColumn, 'nick_name')
     const menu = (
       <Menu
         onClick={this.setChangeType}

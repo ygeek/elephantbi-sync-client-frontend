@@ -15,3 +15,11 @@ export async function _fetchDbDataSource(params) {
     params
   })
 }
+
+export async function _saveDataSource(params) {
+  return requestSimple({
+    url: '/ds/db/create',
+    method: 'POST',
+    body: params
+  })
+}

@@ -16,8 +16,15 @@ const { Step } = Steps;
 
 
 const Database = ({ upload, dispatch }) => {
-  const { currentStep, dataSource, sublimeData, sourceType } = upload;
-  console.log('1111111111111', sublimeData)
+  const {
+    currentStep,
+    dataSource,
+    sublimeData,
+    sourceType,
+    filterTableList,
+    dbType
+  } = upload;
+  console.log('1111111111111', upload)
   const cancel = () => {
     dispatch(routerRedux.push('/selectDatabase'))
   }
@@ -59,6 +66,11 @@ const Database = ({ upload, dispatch }) => {
   const submitSyncCycle = (payload) => {
     dispatch({ type: 'upload/submitSyncCycle', payload })
   }
+
+  const createDs = () => {
+    dispatch({ type: 'upload/createDbDs' })
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.content}>
@@ -81,7 +93,7 @@ const Database = ({ upload, dispatch }) => {
           {
             currentStep === 1 ? (
               <SelectWorksheet
-                dataSource={_.get(dataSource, 'preview', [])}
+                dataSource={dataSource}
                 dispatch={dispatch}
                 sublimeData={sublimeData}
                 changeTableToColumns={changeTableToColumns}
@@ -89,6 +101,7 @@ const Database = ({ upload, dispatch }) => {
                 filterTableNames={filterTableNames}
                 goPrev={goPrev}
                 goAfter={goAfter}
+                filterTableList={filterTableList}
               />
             ) : null
           }
@@ -96,12 +109,13 @@ const Database = ({ upload, dispatch }) => {
             currentStep === 2 ? (
               <BasicInformation
                 sublimeData={sublimeData}
-                sourceType={sourceType}
+                sourceType={dbType}
                 goPrev={goPrev}
                 goAfter={goAfter}
                 changeTableNames={changeTableNames}
                 changeFileName={changeFileName}
                 changeDescription={changeDescription}
+                filterTableList={filterTableList}
               />
             ) : null
           }
@@ -120,6 +134,7 @@ const Database = ({ upload, dispatch }) => {
                 sublimeData={sublimeData}
                 changeSyncInfo={changeSyncInfo}
                 goPrev={goPrev}
+                createDs={createDs}
               />
             ) : null
           }

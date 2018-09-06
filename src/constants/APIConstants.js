@@ -1,2 +1,2 @@
-export const HOST = 'http://localhost:8384';
+export const HOST = window.host;
 export const example = {}

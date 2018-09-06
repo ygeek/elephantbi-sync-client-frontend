@@ -1,10 +1,39 @@
+import postgresql from 'assets/postgreSQL.jpeg'
+import mysql from 'assets/mysql-logo.png'
+import mssql from 'assets/microsoftsql-logo.png'
+import oracle from 'assets/oracle.png'
+import excel from 'assets/excel.jpeg'
+import csv from 'assets/csv.jpeg'
+import sqlite from 'assets/SQLite.png'
+import sybase from 'assets/sybase-logo.png'
+import firebird from 'assets/Firebird_logo.png'
+import failure from 'assets/failure.png'
+import inSync from 'assets/in_sync.png'
+import offline from 'assets/offline.png'
+import success from 'assets/success.png'
+import toBeConfirm from 'assets/to_be_confirmed.png'
+import waiting from 'assets/waiting.png'
+
 export const syncStatus = {
-  0: '离线',
-  1: '同步待确认',
-  2: '等待同步',
-  3: '同步中',
-  4: '同步正常',
-  5: '同步异常'
+  0: { name: '离线', icon: offline },
+  1: { name: '同步待确认', icon: toBeConfirm },
+  2: { name: '等待同步', icon: waiting },
+  3: { name: '同步中', icon: inSync },
+  4: { name: '同步正常', icon: success },
+  5: { name: '同步异常', icon: failure }
 }
 
 export const example = []
+
+export const dslistMap = {
+  0: { icon: csv, name: 'Csv' },
+  1: { icon: excel, name: 'Excel' },
+  2: { icon: mysql, name: 'MySQL' },
+  3: { icon: postgresql, name: 'PostgreSQL' },
+  4: { icon: mssql, name: 'MicrosoftSQL' },
+  5: { icon: oracle, name: 'Oracle' },
+  6: { icon: oracle, name: '多表联合' },
+  7: { icon: sqlite, name: 'SQLite' },
+  8: { icon: sybase, name: 'SyBase' },
+  9: { icon: firebird, name: 'Firebird' }
+}
