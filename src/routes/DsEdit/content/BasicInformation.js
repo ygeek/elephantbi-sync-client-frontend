@@ -4,6 +4,7 @@ import 'antd/lib/form/style/css'
 import Input from 'antd/lib/input'
 import 'antd/lib/input/style/css'
 import _ from 'lodash'
+import { databaseConfig } from '../../Upload/SelectDatabase/config'
 import styles from './index.less'
 
 const FormItem = Form.Item;
@@ -12,9 +13,14 @@ const formLayout = {
   wrapperCol: { span: 16, offset: 2 }
 }
 
-const BasicInformation = ({ form }) => {
+const BasicInformation = ({
+  form,
+  description,
+  name,
+  tableNames = [],
+  sourceType
+}) => {
   const { getFieldDecorator } = form
-  const tableNames = []
   const getTableNameItems = () => {
     return (
       <table className={styles.sheetTable}>
@@ -30,8 +36,10 @@ const BasicInformation = ({ form }) => {
                   <td>
                     <FormItem>
                       {
-                        getFieldDecorator(_.get(table, 'old_table_name'), {
-                          rules: [{ required: true, message: '此项为必填项' }],
+                        getFieldDecorator(`${_.get(table, 'id')}`, {
+                          rules: [{
+                            max: 20, message: '最多可输入20个字符'
+                          }],
                           initialValue: _.get(table, 'new_table_name')
                         })(<input />)
                       }
@@ -47,44 +55,52 @@ const BasicInformation = ({ form }) => {
   }
   return (
     <Form className={styles.basicInformation}>
-    <FormItem
-      {...formLayout}
-      label="数据源类型"
-    >
-      {
-        getFieldDecorator('source_type')(
-          <span>111</span>
-        )
-      }
-    </FormItem>
-    <FormItem
-      {...formLayout}
-      label="数据源名称"
-    >
-      {
-        getFieldDecorator('name', {
-          rules: [{ required: true, message: '此项是必填的' }],
-        })(<Input />)
-      }
-    </FormItem>
-    <FormItem
-      label="工作表名称"
-      {...formLayout}
-    >
-      {
-        getTableNameItems()
-      }
-    </FormItem>
-    <FormItem
-      label="数据源描述"
-      {...formLayout}
-    >
-      {
-        getFieldDecorator('description', {
-        })(<Input.TextArea rows={3} />)
-      }
-    </FormItem>
-  </Form>
+      <FormItem
+        {...formLayout}
+        label="数据源类型"
+      >
+        {
+          getFieldDecorator('source_type')(
+            <span>{_.get(_.find(databaseConfig, { source_type: `${sourceType}` }), 'name')}</span>
+          )
+        }
+      </FormItem>
+      <FormItem
+        {...formLayout}
+        label="数据源名称"
+      >
+        {
+          getFieldDecorator('name', {
+            rules: [{
+              required: true, message: '此项是必填的'
+            }, {
+              max: 20, message: '最多可输入20个字符'
+            }],
+            initialValue: name
+          })(<Input />)
+        }
+      </FormItem>
+      <FormItem
+        label="工作表名称"
+        {...formLayout}
+      >
+        {
+          getTableNameItems()
+        }
+      </FormItem>
+      <FormItem
+        label="数据源描述"
+        {...formLayout}
+      >
+        {
+          getFieldDecorator('description', {
+            initialValue: description
+          })(<Input.TextArea
+            rows={3}
+          />)
+        }
+      </FormItem>
+    </Form>
   )
 }
 

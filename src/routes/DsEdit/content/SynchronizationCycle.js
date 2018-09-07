@@ -18,15 +18,26 @@ const { Option } = Select;
 
 class SynchronizationCycle extends React.Component {
   render() {
-    const { modelState, dispatch } = this.props
+    const { syncInfo, changeSyncInfo, changeSchedule } = this.props
+    const {
+      freq,
+      max_retry: maxRetry,
+      retry_interval: retryInterval,
+      retry_on_fail: retryOnFail,
+      schedule
+    } = syncInfo
+    const {
+      sync_at_day: date,
+      sync_at_month: month,
+      sync_at_time: time,
+      sync_at_weekday: week,
+      sync_ends_time: endTime,
+      sync_starts_time: startTime
+    } = schedule
     const getOptions = (options) => {
       return _.map(options, (option) => {
         return <Option key={option.value}>{option.title}</Option>
       })
-    }
-    const { cycle, startTime, endTime, time, week, month, date, retry, retryInterval, retryMost } = modelState
-    const changeValue = (value) => {
-      dispatch({ type: 'dsEdit/changeSyncCycle', payload: value })
     }
     return (
       <div className={styles.synchronizationCycle}>
@@ -35,15 +46,15 @@ class SynchronizationCycle extends React.Component {
           <Col span={18}>
             <Select
               style={{ width: '300px' }}
-              value={cycle}
-              onChange={(val) => { changeValue({ cycle: val }) }}
+              value={freq}
+              onChange={(val) => { changeSyncInfo({ freq: val }) }}
             >
               {getOptions(cycleOptions)}
             </Select>
           </Col>
         </Row>
         {
-          cycle === 'hour' ? (
+          freq === 'hourly' ? (
             <Row align="middle" type="flex">
               <Col span={6}>介于：</Col>
               <Col span={18}>
@@ -53,7 +64,9 @@ class SynchronizationCycle extends React.Component {
                   style={{ width: '90px' }}
                   placeholder=""
                   value={moment(startTime, 'HH:mm a')}
-                  onChange={(time, timeString) => { changeValue({ startTime: timeString }) }}
+                  onChange={(time, timeString) => {
+                    changeSchedule({ sync_starts_time: timeString })
+                  }}
                 />
                 <span className={styles.divider}>~</span>
                 <TimePicker
@@ -62,14 +75,16 @@ class SynchronizationCycle extends React.Component {
                   style={{ width: '90px' }}
                   placeholder=""
                   value={moment(endTime, 'HH:mm a')}
-                  onChange={(time, timeString) => { changeValue({ endTime: timeString }) }}
+                  onChange={(time, timeString) => {
+                    changeSchedule({ sync_ends_time: timeString })
+                  }}
                 />
               </Col>
             </Row>
           ) : null
         }
         {
-          cycle === 'day' || cycle === 'workday' ? (
+          freq === 'daily' || freq === 'workday' ? (
             <Row align="middle" type="flex">
               <Col span={6}>在：</Col>
               <Col span={18}>
@@ -79,21 +94,21 @@ class SynchronizationCycle extends React.Component {
                   style={{ width: '90px' }}
                   placeholder=""
                   value={moment(time, 'HH:mm a')}
-                  onChange={(time, timeString) => { changeValue({ time: timeString }) }}
+                  onChange={(time, timeString) => { changeSchedule({ sync_at_time: timeString }) }}
                 />
               </Col>
             </Row>
           ) : null
         }
         {
-          cycle === 'week' ? (
+          freq === 'weekly' ? (
             <Row align="middle" type="flex">
               <Col span={6}>在：</Col>
               <Col span={18}>
                 <Select
                   style={{ width: '90px' }}
                   value={week}
-                  onChange={(val) => { changeValue({ week: val }) }}
+                  onChange={(val) => { changeSchedule({ sync_at_weekday: val }) }}
                 >{getOptions(weekOption)}</Select>
                 <span className={styles.divider}>~</span>
                 <TimePicker
@@ -102,21 +117,21 @@ class SynchronizationCycle extends React.Component {
                   style={{ width: '90px' }}
                   placeholder=""
                   value={moment(time, 'HH:mm a')}
-                  onChange={(time, timeString) => { changeValue({ time: timeString }) }}
+                  onChange={(time, timeString) => { changeSchedule({ sync_at_time: timeString }) }}
                 />
               </Col>
             </Row>
           ) : null
         }
         {
-          cycle === 'month' ? (
+          freq === 'monthly' ? (
             <Row align="middle" type="flex">
               <Col span={6}>在：</Col>
               <Col span={18}>
                 <Select
                   style={{ width: '90px' }}
                   value={date}
-                  onChange={(val) => { changeValue({ date: val }) }}
+                  onChange={(val) => { changeSchedule({ sync_at_day: val }) }}
                 >{getOptions(dateOptions)}</Select>
                 <span className={styles.divider}>~</span>
                 <TimePicker
@@ -125,27 +140,27 @@ class SynchronizationCycle extends React.Component {
                   style={{ width: '90px' }}
                   placeholder=""
                   value={moment(time, 'HH:mm a')}
-                  onChange={(time, timeString) => { changeValue({ time: timeString }) }}
+                  onChange={(time, timeString) => { changeSchedule({ sync_at_time: timeString }) }}
                 />
               </Col>
             </Row>
           ) : null
         }
         {
-          cycle === 'year' ? (
+          freq === 'yearly' ? (
             <Row align="middle" type="flex">
               <Col span={6}>在：</Col>
               <Col span={18}>
                 <Select
                   style={{ width: '90px' }}
                   value={month}
-                  onChange={(val) => { changeValue({ month: val }) }}
+                  onChange={(val) => { changeSchedule({ sync_at_month: val }) }}
                 >{getOptions(monthOption)}</Select>
                 <span className={styles.divider}>~</span>
                 <Select
                   style={{ width: '90px' }}
                   value={date}
-                  onChange={(val) => { changeValue({ date: val }) }}
+                  onChange={(val) => { changeSchedule({ sync_at_day: val }) }}
                 >{getOptions(dateOptions)}</Select>
                 <span className={styles.divider}>~</span>
                 <TimePicker
@@ -154,7 +169,7 @@ class SynchronizationCycle extends React.Component {
                   style={{ width: '90px' }}
                   placeholder=""
                   value={moment(time, 'HH:mm a')}
-                  onChange={(time, timeString) => { changeValue({ time: timeString }) }}
+                  onChange={(time, timeString) => { changeSchedule({ sync_at_time: timeString }) }}
                 />
               </Col>
             </Row>
@@ -162,13 +177,13 @@ class SynchronizationCycle extends React.Component {
         }
         <Row>
           <Radio
-            checked={retry}
+            checked={retryOnFail}
             onChange={(checked) => {
-              changeValue({ retry: checked })
+              changeSyncInfo({ retry_on_fail: checked ? 1 : 0 })
             }}
           >
             如果不成功，重试
-              </Radio>
+          </Radio>
         </Row>
         <Row align="middle" type="flex">
           <Col span={6}>重试时间间隔：</Col>
@@ -176,7 +191,7 @@ class SynchronizationCycle extends React.Component {
             <Select
               value={retryInterval}
               style={{ width: '300px' }}
-              onChange={(val) => { changeValue({ retryInterval: val }) }}
+              onChange={(val) => { changeSyncInfo({ retry_interval: val }) }}
             >
               {getOptions(intervalOptions)}
             </Select>
@@ -186,9 +201,9 @@ class SynchronizationCycle extends React.Component {
           <Col span={6}>至多重试：</Col>
           <Col span={18}>
             <Select
-              value={retryMost}
+              value={maxRetry}
               style={{ width: '300px' }}
-              onChange={(val) => { changeValue({ retryMost: val }) }}
+              onChange={(val) => { changeSyncInfo({ max_retry: val }) }}
             >
               {getOptions(mostOptions)}
             </Select>
@@ -196,13 +211,13 @@ class SynchronizationCycle extends React.Component {
         </Row>
         <Row>
           <Radio
-            checked={!retry}
+            checked={!retryOnFail}
             onChange={(checked) => {
-              changeValue({ retry: !checked })
+              changeSyncInfo({ retry_on_fail: !checked ? 1 : 0 })
             }}
           >
             如果不成功，不重试
-              </Radio>
+          </Radio>
         </Row>
       </div>
     )

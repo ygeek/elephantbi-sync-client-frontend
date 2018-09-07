@@ -14,6 +14,29 @@ import styles from './index.less';
 
 const DsEdit = ({ dsEdit, dispatch, form }) => {
   const { TabPane } = Tabs
+  const dataSource = _.get(dsEdit, 'dataSource')
+  const sourceType = _.get(dataSource, 'source_type')
+  const dsName = _.get(dataSource, 'name')
+  const description = _.get(dataSource, 'description')
+  const tableNames = _.get(dsEdit, 'tableNames')
+  const host = _.get(dataSource, 'database.host')
+  const port = _.get(dataSource, 'database.port')
+  const dbName = _.get(dataSource, 'database.name')
+  const username = _.get(dataSource, 'database.username')
+  const syncInfo = _.get(dsEdit, 'sublimeData.syncInfo')
+  const tableToColumns = _.get(dsEdit, 'tableToColumns')
+  const syncMode = _.get(dsEdit, 'sublimeData.syncMode')
+  const changeSyncInfo = (params) => {
+    dispatch({ type: 'dsEdit/changeSyncInfo', payload: params })
+  }
+
+  const changeSchedule = (params) => {
+    dispatch({ type: 'dsEdit/changeSchedule', payload: params })
+  }
+
+  const changeSyncMode = (name, params) => {
+    dispatch({ type: 'dbEdit/changeSyncMode', payload: { name, params } })
+  }
   const config = [
     {
       title: '基本信息',
@@ -21,6 +44,10 @@ const DsEdit = ({ dsEdit, dispatch, form }) => {
       component: (
         <BasicInformation
           form={form}
+          sourceType={sourceType}
+          name={dsName}
+          description={description}
+          tableNames={tableNames}
         />
       )
     }, {
@@ -29,6 +56,10 @@ const DsEdit = ({ dsEdit, dispatch, form }) => {
       component: (
         <AccountInformation
           form={form}
+          host={host}
+          port={port}
+          dbName={dbName}
+          username={username}
         />
       )
     }, {
@@ -36,14 +67,22 @@ const DsEdit = ({ dsEdit, dispatch, form }) => {
       key: 'cycle',
       component: (
         <SynchronizationCycle
-          modelState={dsEdit}
-          dispatch={dispatch}
+          syncInfo={syncInfo}
+          changeSyncInfo={changeSyncInfo}
+          changeSchedule={changeSchedule}
         />
       )
     }, {
       title: '同步模式',
       key: 'mode',
-      component: <SynchronousMode />
+      component: (
+        <SynchronousMode
+          tableNames={tableNames}
+          tableToColumns={tableToColumns}
+          syncMode={syncMode}
+          changeSyncMode={changeSyncMode}
+        />
+      )
     }
   ]
   const getTabPanes = (config) => {

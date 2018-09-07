@@ -109,7 +109,7 @@ const Database = ({ upload, dispatch }) => {
             currentStep === 2 ? (
               <BasicInformation
                 sublimeData={sublimeData}
-                sourceType={dbType}
+                sourceType={sourceType}
                 goPrev={goPrev}
                 goAfter={goAfter}
                 changeTableNames={changeTableNames}

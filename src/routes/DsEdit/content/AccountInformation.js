@@ -15,7 +15,13 @@ const formLayout = {
   wrapperCol: { span: 16, offset: 2 }
 }
 
-const AccountInformation = ({ form }) => {
+const AccountInformation = ({
+  form,
+  host,
+  port,
+  dbName,
+  username
+}) => {
   const { getFieldDecorator } = form
   return (
     <div className={styles.accountInformation}>
@@ -31,7 +37,8 @@ const AccountInformation = ({ form }) => {
             >
               {
                 getFieldDecorator('host', {
-                  rules: [{ required: true, message: '此项必填' }]
+                  rules: [{ required: true, message: '此项必填' }],
+                  initialValue: host
                 })(<Input />)
               }
             </FormItem>
@@ -46,7 +53,8 @@ const AccountInformation = ({ form }) => {
             >
               {
                 getFieldDecorator('port', {
-                  rules: [{ required: true, message: '此项必填' }]
+                  rules: [{ required: true, message: '此项必填' }],
+                  initialValue: port
                 })(<Input />)
               }
             </FormItem>
@@ -58,7 +66,8 @@ const AccountInformation = ({ form }) => {
         >
           {
             getFieldDecorator('db_name', {
-              rules: [{ required: true, message: '此项必填' }]
+              rules: [{ required: true, message: '此项必填' }],
+              initialValue: dbName
             })(<Input />)
           }
         </FormItem>
@@ -68,7 +77,8 @@ const AccountInformation = ({ form }) => {
         >
           {
             getFieldDecorator('username', {
-              rules: [{ required: true, message: '此项必填' }]
+              rules: [{ required: true, message: '此项必填' }],
+              initialValue: username
             })(
               <Input />
             )
@@ -79,9 +89,7 @@ const AccountInformation = ({ form }) => {
           {...formLayout}
         >
           {
-            getFieldDecorator('password', {
-              rules: [{ required: true, message: '此项必填' }]
-            })(
+            getFieldDecorator('password')(
               <Input type="password" />
             )
           }

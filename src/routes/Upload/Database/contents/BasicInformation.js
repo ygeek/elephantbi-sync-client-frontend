@@ -82,7 +82,7 @@ const BasicInformation = ({
         >
           {
             getFieldDecorator('source_type')(
-              <span>{_.get(_.find(databaseConfig, { source_type: parseInt(sourceType, 10) }), 'name')}</span>
+              <span>{_.get(_.find(databaseConfig, { source_type: sourceType }), 'name')}</span>
             )
           }
         </FormItem>

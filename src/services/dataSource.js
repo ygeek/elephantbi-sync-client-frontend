@@ -68,3 +68,11 @@ export async function _changeColumns(columns) {
     }
   })
 }
+
+export async function _editDbDatasource(id, params) {
+  return requestSimple({
+    url: `/ds/db/${id}`,
+    method: 'PUT',
+    body: params
+  })
+}
