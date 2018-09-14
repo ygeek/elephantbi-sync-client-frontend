@@ -9,9 +9,9 @@ import Dropdown from 'antd/lib/dropdown'
 import 'antd/lib/dropdown/style/css'
 import Menu from 'antd/lib/menu'
 import 'antd/lib/menu/style/css'
-import Modal from 'antd/lib/modal'
+import confirmModal from 'components/ConfirmModal'
 import 'antd/lib/modal/style/css'
-import { syncStatus, dslistMap } from '../config'
+import { syncStatusMap, dslistMap, menuConfig, isDataBase, isSyncing } from '../config'
 import { databaseConfig } from '../Upload/SelectDatabase/config'
 import styles from './index.less'
 
@@ -23,64 +23,70 @@ const DsListItem = ({
   toDetail,
   toEdit,
   showTransfer,
-  deleteDs
+  deleteDs,
+  startSync,
+  stopSync,
+  confirmSync
 }) => {
   const MenuItem = Menu.Item
-  const checkSyncing = (status) => {
-    if ([2, 3, 4, 5].includes(status)) {
-      return true
-    }
-    return false
+  const sourceType = _.get(data, 'source_type')
+  const syncStatus = _.get(data, 'sync_status')
+  const showModal = (method, id, type) => {
+    confirmModal({
+      title: '提示',
+      content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
+      okText: '停止并继续',
+      type: 'warning',
+      onOk() {
+        method(id, type);
+      }
+    })
   }
   const menuOnClick = ({ key }) => {
-    switch(key) {
+    switch (key) {
       case 'detail':
         toDetail(data.id);
         break;
       case 'edit':
-        if (checkSyncing(data.sync_status)) {
-          Modal.confirm({
-            title: '提示',
-            content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
-            cancelText: '取消',
-            okText: '停止并继续',
-            onOk() {
-              toEdit(data.id);
-            }
-          })
+        if (isDataBase(sourceType) && isSyncing(syncStatus)) {
+          showModal(toEdit, data.id, sourceType)
         } else {
-          toEdit(data.id);
+          toEdit(data.id, sourceType);
         }
         break;
       case 'delete':
-        if (checkSyncing(data.sync_status)) {
-          Modal.confirm({
-            title: '提示',
-            content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
-            cancelText: '取消',
-            okText: '停止并继续',
-            onOk() {
-              deleteDs(data.id)
-            }
-          })
+        if (isDataBase(sourceType) && isSyncing(syncStatus)) {
+          showModal(deleteDs, data.id, sourceType)
         } else {
           deleteDs(data.id)
         }
         break;
       case 'transfer':
-        if (checkSyncing(data.sync_status)) {
-          Modal.confirm({
-            title: '提示',
-            content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
-            cancelText: '取消',
-            okText: '停止并继续',
-            onOk() {
-              showTransfer(data.id)
-            }
-          })
+        if (isDataBase(sourceType) && isSyncing(syncStatus)) {
+          showModal(showTransfer, data.id, sourceType)
         } else {
           showTransfer(data.id)
         }
+        break;
+      case 'trigger':
+         startSync(data.id, 1)
+         break;
+      case 'start':
+        startSync(data.id, 0)
+        break;
+      case 'confirm':
+        confirmSync(data.id)
+        break;
+      case 'stop':
+        confirmModal({
+          title: '停止同步',
+          content: '停止同步后数据将离线，需要再次手动触发同步，是否继续停止同步',
+          okText: '确认',
+          onOk() {
+            stopSync(data.id)
+          },
+          type: 'info'
+        })
         break;
       default:
         break;
@@ -88,30 +94,11 @@ const DsListItem = ({
   }
   const menu = (
     <Menu onClick={menuOnClick}>
-      <MenuItem key="detail">查看详细信息</MenuItem>
       {
-        [2, 4, 5].includes(data.client) ? (
-          <MenuItem key="trigger">立即触发同步</MenuItem>
-        ) : null
+        menuConfig(syncStatus, 'list', sourceType).map(item => (
+          <MenuItem key={item.key} style={{ display: item.auth ? 'block' : 'none' }}>{item.title}</MenuItem>
+        ))
       }
-      {
-        [2, 4, 5, 3].includes(data.client) ? (
-          <MenuItem key="stop">停止同步</MenuItem>
-        ) : null
-      }
-      {
-        [0].includes(data.client) ? (
-          <MenuItem key="start">开始同步</MenuItem>
-        ) : null
-      }
-      {
-        [1].includes(data.client) ? (
-          <MenuItem key="confirm">同步确认</MenuItem>
-        ) : null
-      }
-      <MenuItem key="edit">编辑</MenuItem>
-      <MenuItem key="transfer">转让</MenuItem>
-      <MenuItem key="delete">删除</MenuItem>
     </Menu>
   )
   return (
@@ -138,9 +125,9 @@ const DsListItem = ({
             <div className={styles.infoContent}>{moment(_.get(data, 'updated_at')).format('YYYY/MM/DD HH:mm:ss')}</div>
           </div>
           <div className={styles.syncInfoItem}>
-            <img alt="" src={syncStatus[_.get(data, 'sync_status')].icon} />
+            <img alt="" src={syncStatusMap[_.get(data, 'sync_status')].icon} />
             <div className={styles.syncInfoTitle}>同步状态</div>
-            <div className={styles.syncInfoContent}>{syncStatus[_.get(data, 'sync_status')].name}</div>
+            <div className={styles.syncInfoContent}>{syncStatusMap[_.get(data, 'sync_status')].name}</div>
           </div>
         </div>
         <button

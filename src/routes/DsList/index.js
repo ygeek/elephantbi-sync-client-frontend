@@ -42,6 +42,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
       }
     })
   }
+
   let data = []
   _.forEach(list, (value, key) => {
     data = [...data, ...value]
@@ -66,6 +67,18 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
   const closeTransfer = () => {
     dispatch({ type: 'dsList/hideTransferModal' })
   }
+
+  const confirmSync = (id) => {
+    dispatch({ type: 'dsList/confirmSync', payload: id })
+  }
+
+  const startSync = (id, type) => {
+    dispatch({ type: 'dsList/startSync', payload: { id, type } })
+  }
+
+  const stopSync = (id) => {
+    dispatch({ type: 'dsList/stopSync', payload: id })
+  }
   const getDsList = () => {
     return _.map(data, (listItem, index) => {
       const id = _.get(listItem, 'id')
@@ -81,6 +94,9 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
           toEdit={toEdit}
           deleteDs={deleteDs}
           showTransfer={showTransfer}
+          startSync={startSync}
+          stopSync={stopSync}
+          confirmSync={confirmSync}
         />
       )
     })
@@ -133,7 +149,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
         visible={transferModalVisible}
         closeTransfer={closeTransfer}
         users={users}
-        groups={groups}
+        groups={[]}
         shareList={shareUserList}
         shareGroups={shareGroupList}
         owner={owner}

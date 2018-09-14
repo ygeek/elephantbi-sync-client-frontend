@@ -1,11 +1,27 @@
 import React from 'react';
 import { connect } from 'dva';
+import { Dropdown, Menu } from 'antd'
 import { routerRedux } from 'dva/router'
 import avatar from 'assets/avatar.jpg'
 import _ from 'lodash'
 import styles from './index.less';
 
+const MenuItem = Menu.Item
+
 const Navigator = ({ dispatch, currentUser }) => {
+  const clickMenu = ({ key }) => {
+    switch (key) {
+      case 'logout':
+        dispatch({ type: 'currentUser/logOut' })
+      default:
+        break;
+    }
+  }
+  const menu = (
+    <Menu onClick={clickMenu}>
+      <MenuItem key="logout">登出</MenuItem>
+    </Menu>
+  )
   return (
     <div className={styles.container}>
       <button
@@ -33,7 +49,9 @@ const Navigator = ({ dispatch, currentUser }) => {
         >
           新增数据源
         </button>
-        <img className={styles.avatar} alt="" src={avatar} />
+        <Dropdown overlay={menu} >
+          <img className={styles.avatar} alt="" src={avatar} />
+        </Dropdown>
         <span className={styles.name}>{_.get(currentUser, 'name')}</span>
       </div>
     </div>

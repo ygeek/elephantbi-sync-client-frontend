@@ -16,7 +16,8 @@ export default {
       history.listen((location) => {
         const { pathname } = location;
         const match = pathToRegexp('/(.*)').exec(pathname)
-        if (match) {
+        const matchLogin = pathToRegexp('/login').exec(pathname)
+        if (match && !matchLogin) {
           dispatch({ type: 'fetchCurrentUserWithoutJump' })
         }
       })
@@ -71,5 +72,11 @@ export default {
         companyInfo: null
       }
     },
+    setCurrentUser(state, { payload }) {
+      return {
+        ...state,
+        ...payload
+      }
+    }
   }
 }

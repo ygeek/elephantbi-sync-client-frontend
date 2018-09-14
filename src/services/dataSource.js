@@ -15,11 +15,12 @@ export async function _fetchTableIds(id) {
   })
 }
 
-export async function _fetchDsList(params) {
+export async function _fetchDsList(params) { //5001
   return requestSimple({
     method: 'GET',
     url: '/ds/list',
-    params
+    params,
+    host: window.newHost
   })
 }
 
@@ -74,5 +75,29 @@ export async function _editDbDatasource(id, params) {
     url: `/ds/db/${id}`,
     method: 'PUT',
     body: params
+  })
+}
+
+export async function _startSync(id, params) { //5001
+  return requestSimple({
+    url: `/ds/${id}/sync`,
+    method: 'POST',
+    body: params,
+    host: window.newHost
+  })
+}
+
+export async function _stopSync(id) { //5001
+  return requestSimple({
+    url: `/ds/${id}/sync`,
+    method: 'DELETE',
+    host: window.newHost
+  })
+}
+
+export async function _confirmSync(id) {
+  return requestSimple({
+    url: `/ds/${id}/sync/confirm`,
+    method: 'POST'
   })
 }

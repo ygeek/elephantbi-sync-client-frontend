@@ -105,21 +105,13 @@ class AccountInformation extends React.Component {
                 }
               </FormItem>
             </Form>
-            <div className={styles.bottomButton}>
-              <Button
-                type="primary"
-                onClick={databaseConnect}
-              >
-                连接
-            </Button>
-            </div>
           </div>
         </div>
         <Footer
           text1="取消"
           text2="下一步"
           click1={cancel}
-          click2={goAfter}
+          click2={databaseConnect}
         />
       </div>
     )

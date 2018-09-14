@@ -37,26 +37,26 @@ export default {
   },
 
   effects: {
-    * connectDatabase(action, { select, call, put }) {
+    * connectDatabase(action, { select, call, put }) { //5001
       const { databaseInfo, dbType } = yield select(state => state.upload);
       const { data, err } = yield call(_connectDatabase, {
         ...databaseInfo,
         db_type: `${dbType}`
       });
-      if (data) {
-        yield put({ type: 'saveTableColumns', payload: data })
+      if (data && data.status >= 200 && data.status < 300) {
+        yield put({ type: 'saveTableColumns', payload: data.data })
         yield put({ type: 'fetchdbDataSource' })
       }
     },
 
-    * fetchdbDataSource(action, { select, call, put }) {
+    * fetchdbDataSource(action, { select, call, put }) { //5001
       const { databaseInfo, dbType } = yield select(state => state.upload)
       const { data, err } = yield call(_fetchDbDataSource, {
         ...databaseInfo,
         db_type: `${dbType}`
       })
-      if (data) {
-        yield put({ type: 'saveDataSource', payload: data })
+      if (data && data.status >= 200 && data.status < 300) {
+        yield put({ type: 'saveDataSource', payload: data.data })
         yield put({ type: 'changeStep', payload: 'after' })
       }
     },

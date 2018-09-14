@@ -9,16 +9,17 @@ import Dropdown from 'antd/lib/dropdown'
 import 'antd/lib/dropdown/style/css'
 import Menu from 'antd/lib/menu'
 import 'antd/lib/menu/style/css'
-import Modal from 'antd/lib/modal'
 import 'antd/lib/modal/style/css'
 import Table from 'antd/lib/table'
 import 'antd/lib/table/style/css'
+import TransferModal from '../DsList/TransferModal'
 import DataSourceTable from 'components/DataSourceTable'
+import confirmModal from 'components/ConfirmModal'
 import moment from 'moment'
 import worksheet from 'assets/worksheet.png'
 import sizeIcon from 'assets/size.png'
 import { routerRedux } from 'dva/router'
-import { syncStatus, dslistMap } from '../config'
+import { syncStatusMap, dslistMap, menuConfig, isDataBase, isSyncing } from '../config'
 import styles from './index.less'
 
 const DsDetail = ({ dsDetail, dispatch }) => {
@@ -28,6 +29,12 @@ const DsDetail = ({ dsDetail, dispatch }) => {
   const currentTableName = _.get(currentTable, 'table_name')
   const status = _.get(dataSource, 'sync_status')
   const sourceType = _.get(dataSource, 'source_type')
+  const syncStatus = _.get(dataSource, 'sync_status')
+  const transferModalVisible = _.get(dsDetail, 'transferModalVisible', false)
+  const users = _.get(dsDetail, 'users', [])
+  const shareUserList = _.get(dataSource, 'shared_users_list', [])
+  const shareGroupList = _.get(dataSource, 'shared_groups_list', [])
+  const owner = _.get(dataSource, 'user', {})
   const { TabPane } = Tabs
   const changeColumns = (payload) => {
     dispatch({ type: 'dsDetail/changeColumns', payload })
@@ -35,6 +42,9 @@ const DsDetail = ({ dsDetail, dispatch }) => {
   const logTypeMap = {
     ADD: '新增',
     UPDATE: '更新'
+  }
+  const closeTransfer = () => {
+    dispatch({ type: 'dsDetail/hideTransferModal' })
   }
   const historyColumn = [
     {
@@ -57,6 +67,34 @@ const DsDetail = ({ dsDetail, dispatch }) => {
       }
     }
   ]
+  const showModal = (method, id, type) => {
+    confirmModal({
+      title: '提示',
+      content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
+      okText: '停止并继续',
+      type: 'warning',
+      onOk() {
+        method(id, type);
+      }
+    })
+  }
+  const deleteDs = () => {
+    confirmModal({
+      title: '删除数据源',
+      content: '若删除数据源，关联的工作表与卡片将一并删除，是否确认删除？',
+      onOk() {
+        dispatch({ type: 'dsDetail/deleteDataSource' })
+      },
+      okText: '删除',
+      type: 'danger'
+    })
+  }
+  const startSync = (id, type) => {
+    dispatch({ type: 'dsDetail/startSync', payload: { id, type } })
+  }
+  const showTransferModal = () => {
+    dispatch({ type: 'dsDetail/showTransferModal' })
+  }
   const historyRecord = (
     <Table
       columns={historyColumn}
@@ -65,35 +103,82 @@ const DsDetail = ({ dsDetail, dispatch }) => {
       className={styles.logTable}
     />
   )
+  const toEdit = (id) => {
+    dispatch(routerRedux.push(`/dbEdit/${id}`))
+  }
+  const confirmSync = (id) => {
+    dispatch({ type: 'dsDetail/confirmSync', payload: id })
+  }
   const MenuItem = Menu.Item
   const clickMenu = ({ key }) => {
-    if (key === 'edit') {
-      dispatch(routerRedux.push(`/ds/edit/${dsId}`))
-    }
-    if (key === 'delete') {
-      Modal.confirm({
-        title: '删除数据源',
-        content: '若删除数据源，关联工作表和卡片将一并删除，是否确认删除',
-        okText: '确认',
-        cancelText: '取消',
-        onOk() {
-          dispatch({ type: 'dsDetail/deleteDs' })
+    switch (key) {
+      case 'delete':
+        if (isDataBase(sourceType) && isSyncing(syncStatus)) {
+          showModal(deleteDs)
+        } else {
+          deleteDs()
         }
-      })
+        break;
+      case 'transfer':
+        if (isDataBase(sourceType) && isSyncing(syncStatus)) {
+          showModal(showTransferModal)
+        } else {
+          showTransferModal()
+        }
+        break;
+      case 'edit':
+        toEdit(dsId, sourceType)
+        break;
+      case 'trigger':
+        startSync(dsId, 1)
+        break;
+      case 'start':
+        startSync(dsId, 0)
+        break;
+      case 'confirm':
+        confirmSync(dsId)
+        break;
+      case 'stop':
+        confirmModal({
+          title: '停止同步',
+          content: '停止同步后数据将离线，需要再次手动触发同步，是否继续停止同步',
+          okText: '确认',
+          onOk() {
+            dispatch({ type: 'dsDetail/stopSync' });
+          },
+          type: 'info'
+        })
+        break;
+      default:
+        break;
     }
   }
-  const operateMenu = (
-    <Menu
-      onClick={clickMenu}
-    >
-      <MenuItem key="edit">编辑</MenuItem>
-      <MenuItem key="delete">删除</MenuItem>
+  const menu = (
+    <Menu onClick={clickMenu}>
+      {
+        menuConfig(syncStatus, 'detail', sourceType).map(item => (
+          <MenuItem key={item.key} style={{ display: item.auth ? 'block' : 'none' }}>{item.title}</MenuItem>
+        ))
+      }
     </Menu>
   )
   const changeActiveKey = (key) => {
     dispatch({ type: 'dsDetail/changeActiveKey', payload: key })
     dispatch({ type: 'dsDetail/fetchDsLog' })
     dispatch({ type: 'dsDetail/fetchDsDetail' })
+  }
+  const transferOwner = (params) => {
+    const { user_id: userID } = params
+    confirmModal({
+      title: '转让数据源',
+      content: `将数据源转让给${_.get(_.find(users, { id: parseInt(userID, 10) }), 'name')}后，你将不再有此数据源的任何权限，是否确认操作`,
+      onOk() {
+        dispatch({ type: 'dsDetail/tranferUser', payload: params })
+      },
+      okText: '确认',
+      cancelText: '取消',
+      type: 'warning'
+    })
   }
   return (
     <div className={styles.dsDetail}>
@@ -109,7 +194,7 @@ const DsDetail = ({ dsDetail, dispatch }) => {
           </div>
           <div className={styles.operate}>
             <Dropdown
-             overlay={operateMenu}
+             overlay={menu}
             >
               <Icon type="ellipsis" />
             </Dropdown>
@@ -146,7 +231,7 @@ const DsDetail = ({ dsDetail, dispatch }) => {
             </div>
           </span>
           <span className={styles.infoItem}>
-            <img alt="" src={_.get(syncStatus, `${status}.icon`)} className={styles.infoImg} />
+            <img alt="" src={_.get(syncStatusMap, `${status}.icon`)} className={styles.infoImg} />
             <div className={styles.info}>
               <div className={styles.infoTitle}>同步状态</div>
               <div className={styles.infoContent}>离线</div>
@@ -183,6 +268,16 @@ const DsDetail = ({ dsDetail, dispatch }) => {
           <TabPane tab="历史记录" key="log">{historyRecord}</TabPane>
         </Tabs>
       </div>
+      <TransferModal
+        visible={transferModalVisible}
+        closeTransfer={closeTransfer}
+        users={users}
+        groups={[]}
+        shareList={shareUserList}
+        shareGroups={shareGroupList}
+        owner={owner}
+        onSubmit={transferOwner}
+      />
     </div>
   )
 }

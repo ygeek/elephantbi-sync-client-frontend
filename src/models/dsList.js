@@ -5,7 +5,10 @@ import {
   _deleteDs,
   _fetchUsers,
   _fetchGroups,
-  _tranferUser
+  _tranferUser,
+  _startSync,
+  _stopSync,
+  _confirmSync
 } from '../services/dataSource'
 
 export default {
@@ -33,7 +36,6 @@ export default {
        if (match) {
          dispatch({ type: 'checkStatus' })
          dispatch({ type: 'fetchUsers' })
-         dispatch({ type: 'fetchGroups' })
        }
      })
     }
@@ -42,16 +44,12 @@ export default {
   effects: {
     * checkStatus(action, { select, call, put }) {
       const { firstLogin } = yield select(state => state.currentUser)
-      if (firstLogin === 0) {
-        yield put({ type: 'fetchDsList' })
-      } else {
-        yield put({ type: 'fetchAllDsList' })
-      }
+      yield put({ type: 'fetchDsList' })
     },
-    * fetchAllDsList(action, { select, call, put }) {
+    * fetchAllDsList(action, { select, call, put }) { //5001
       const { data } = yield call(_fetchDsList, { all: 1 });
-      if (data) {
-        const dsList = _.get(data, 'list', [])
+      if (data && data.status >= 200 && data.status < 300) {
+        const dsList = _.get(data, 'data.list', [])
         const canSync = []
         _.forEach(dsList, (item) => {
           if (item.client === 1) {
@@ -62,15 +60,15 @@ export default {
         yield put({ type: 'saveDsList', payload: dsList })
       }
     },
-    * fetchDsList(action, { select, call, put }) {
+    * fetchDsList(action, { select, call, put }) { //5001
       const { pageInfo } = yield select(state => state.dsList)
       const { data } = yield call(_fetchDsList, {
         page: pageInfo.page,
         page_size: pageInfo.pageSize
       });
-      if (data) {
-        const dsList = _.get(data, 'list', [])
-        yield put({ type: 'saveDsList', payload: { [data.meta.current_page]: dsList} })
+      if (data && data.status >= 200 && data.status < 300) {
+        const dsList = _.get(data, 'data.list', [])
+        yield put({ type: 'saveDsList', payload: { [data.data.meta.current_page]: dsList} })
         yield put({ type: 'setMeta', payload: data.meta })
       }
     },
@@ -87,16 +85,29 @@ export default {
         yield put({ type: 'setUsers', payload: data })
       }
     },
-    * fetchGroups(action, { select, call, put }) {
-      const { data } = yield call(_fetchGroups)
-      if (data) {
-        yield put({ type: 'setGroups', payload: data })
-      }
-    },
     * tranferUser({ payload }, { select, call, put }) {
       const { currentTransferId } = yield select(state => state.dsList);
       const { data } = yield call(_tranferUser, payload, currentTransferId)
       if (data) {
+        yield put({ type: 'fetchDsList' })
+      }
+    },
+    * confirmSync({ payload: id }, { select, call, put }) {
+      const { data } = yield call(_confirmSync, id)
+      if (data && data.success) {
+        yield put({ type: 'fetchDsList' })
+      }
+    },
+    * startSync({ payload }, { select, call, put }) { //5001
+      const { id, type } = payload
+      const { data } = yield call(_startSync, id, { sync_now: type })
+      if (data && data.success) {
+        yield put({ type: 'fetchDsList' })
+      }
+    },
+    * stopSync({ payload: dataSourceId }, { select, call, put }) { //5001
+      const { data } = yield call(_stopSync, dataSourceId)
+      if (data && data.success) {
         yield put({ type: 'fetchDsList' })
       }
     }
@@ -106,7 +117,8 @@ export default {
     saveDsList(state, { payload }) {
       return {
         ...state,
-        list: { ...state.list, ...payload }}
+        list: { ...state.list, ...payload }
+      }
     },
     saveCanSync(state, { payload }) {
       return { ...state, canSync: payload }
@@ -132,9 +144,6 @@ export default {
     },
     setUsers(state, { payload }) {
       return { ...state, users: payload }
-    },
-    setGroups(state, { payload }) {
-      return { ...state, groups: payload }
     },
     showTransferModal(state) {
       return { ...state, transferModalVisible: true }

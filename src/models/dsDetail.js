@@ -7,7 +7,12 @@ import {
   _fetchDsLog,
   _changeColumns,
   _deleteDs,
-  _fetchDataSourceLog
+  _fetchDataSourceLog,
+  _startSync,
+  _stopSync,
+  _fetchUsers,
+  _confirmSync,
+  _tranferUser
 } from '../services/dataSource'
 
 export default {
@@ -20,6 +25,8 @@ export default {
     dsDetail: null,
     dsLog: [],
     currentTable: null,
+    transferModalVisible: false,
+    users: []
   },
 
   subscriptions: {
@@ -30,6 +37,7 @@ export default {
        if (match) {
          dispatch({ type: 'saveDsId', payload: match[1] })
          dispatch({ type: 'fetchTableIds' })
+         dispatch({ type: 'fetchUsers' })
        }
      })
     }
@@ -81,13 +89,45 @@ export default {
         yield put({ type: 'fetchDsDetail' })
       }
     },
+    * tranferUser({ payload }, { select, call, put }) {
+      const { dsId } = yield select(state => state.dsDetail);
+      const { data } = yield call(_tranferUser, payload, dsId)
+      if (data) {
+        yield put(routerRedux.push('/dataSource/list'))
+      }
+    },
     * deleteDs(action, { select, call, put }) {
       const { dsId } = yield select(state => state.dsDetail)
       const { data } = yield call(_deleteDs, dsId)
       if (data) {
         yield put(routerRedux.push('/dataSource/list'))
       }
-    }
+    },
+    * confirmSync({ payload: id }, { select, call, put }) {
+      const { data } = yield call(_confirmSync, id)
+      if (data && data.success) {
+        yield put({ type: 'fetchDsDetail' })
+      }
+    },
+    * startSync({ payload }, { select, call, put }) { //5001
+      const { id, type } = payload
+      const { data } = yield call(_startSync, id, { sync_now: type })
+      if (data && data.success) {
+        yield put({ type: 'fetchDsDetail' })
+      }
+    },
+    * stopSync(action, { select, call, put }) { //5001
+      const { dsId } = yield select(state => state.dsDetail)
+      const { data } = yield call(_stopSync, dsId)
+      if (data && data.success) {
+      }
+    },
+    * fetchUsers(action, { select, put, call }) {
+      const { data } = yield call(_fetchUsers);
+      if (data) {
+        yield put({ type: 'setUsers', payload: data })
+      }
+    },
   },
 
   reducers: {
@@ -108,6 +148,15 @@ export default {
     },
     saveCurrentTable(state, { payload }) {
       return { ...state, currentTable: payload }
+    },
+    setUsers(state, { payload }) {
+      return { ...state, users: payload }
+    },
+    showTransferModal(state) {
+      return { ...state, transferModalVisible: true }
+    },
+    hideTransferModal(state) {
+      return { ...state, transferModalVisible: false }
     }
   }
 }

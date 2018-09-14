@@ -58,7 +58,7 @@ export default {
     },
 
     * editDbDatasource({ payload }, { select, call, put }) {
-      const { sublimeData, dataSource } = yield select(state => state.dbEdit)
+      const { sublimeData, dataSource } = yield select(state => state.dsEdit)
       const dbId = _.get(dataSource, 'database.id')
       const {
         db_name: dbName,

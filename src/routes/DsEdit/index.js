@@ -94,10 +94,12 @@ const DsEdit = ({ dsEdit, dispatch, form }) => {
       )
     })
   }
+  console.log(dsEdit)
   const onSubmit = () => {
+    console.log('11111111111111111111')
     form.validateFields((errors, values) => {
       if (!errors) {
-        
+        dispatch({ type: 'dsEdit/editDbDatasource', payload: values })
       }
     })
   }
