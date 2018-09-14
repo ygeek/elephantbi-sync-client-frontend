@@ -37,3 +37,39 @@ export const dslistMap = {
   8: { icon: sybase, name: 'SyBase' },
   9: { icon: firebird, name: 'Firebird' }
 }
+
+export const isSyncing = (status) => {
+  if ([2, 3, 4, 5].includes(status)) {
+    return true
+  }
+  return false
+}
+
+export const isDataBase = (sourceType) => {
+  if ([2, 3, 4, 5, 7, 8, 9].includes(sourceType)) {
+    return true
+  }
+  return false
+}
+
+export const menuConfig = (syncStatus, canEdit, source, sourceType) => ([{
+  title: '查看详细信息', key: 'detail', auth: source === 'list'
+}, {
+  title: '更新数据', key: 'update', auth: canEdit && !isDataBase(sourceType)
+}, {
+  title: '立即触发同步', key: 'trigger', auth: [2, 4, 5].includes(syncStatus) && isDataBase(sourceType) && canEdit
+}, {
+  title: '停止同步', key: 'stop', auth: [2, 4, 5, 3].includes(syncStatus) && isDataBase(sourceType) && canEdit
+}, {
+  title: '开始同步', key: 'start', auth: [0].includes(syncStatus) && isDataBase(sourceType) && canEdit
+}, {
+  title: '同步确认', key: 'confirm', auth: [1].includes(syncStatus) && isDataBase(sourceType) && canEdit
+}, {
+  title: '追加数据', key: 'append', auth: [0, 1].includes(sourceType) && canEdit
+}, {
+  title: '编辑', key: 'edit', auth: canEdit
+}, {
+  title: '转让', key: 'transfer', auth: canEdit
+}, {
+  title: '删除', key: 'delete', auth: canEdit
+}])

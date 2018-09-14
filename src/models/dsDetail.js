@@ -1,7 +1,14 @@
 import pathToRegexp from 'path-to-regexp';
 import _ from 'lodash'
 import { routerRedux } from 'dva/router'
-import { _fetchDsDetail, _fetchTableIds, _fetchDsLog, _changeColumns, _deleteDs } from '../services/dataSource'
+import {
+  _fetchDsDetail,
+  _fetchTableIds,
+  _fetchDsLog,
+  _changeColumns,
+  _deleteDs,
+  _fetchDataSourceLog
+} from '../services/dataSource'
 
 export default {
   namespace: 'dsDetail',

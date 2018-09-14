@@ -70,11 +70,11 @@
     }
   }
   .leftColumn {
-    width: 161px;
-    height: calc(~"100% - 170px");
+    width: 198px;
+    height: calc(~"100% - 167px");
     overflow: auto;
     background-color: #fff;
-    padding: 30px 0px;
+    padding: 27px 0px;
     float: left;
     font-size: 12px;
     .leftTitle {
@@ -88,24 +88,24 @@
   
     :global(.ant-tabs) {
       :global(.ant-tabs-tab-active) {
-        background-color: #fafafa
+        background-color: #82c4eb;
+        color: #fff !important;
+        background-image: url('assets/tableActive.png') !important;
       }
       :global(.ant-tabs-bar) {
         width: 100%;
         border-left: none;
         :global(.ant-tabs-tab) {
-          padding: 8px 0 8px 28px;
+          padding: 12px 0 12px 38px;
           margin-bottom: 0px;
-          font-size: 12px;
-          height: 34px;
+          font-size: 14px;
+          background-image: url('assets/table.png');
+          height: 45px;
+          background-repeat: no-repeat;
+          background-position: 15px 13px;
           &:hover {
             color: rgba(0, 0, 0, 0.65);
           }
-        }
-      
-        :global(.ant-tabs-tab-active) {
-          color: rgba(0, 0, 0, 0.65);
-          font-weight: 600;
         }
       }
     }
@@ -124,7 +124,7 @@
 
   .rightColumn {
     float: right;
-    width: calc(~"100% - 180px");
+    width: calc(~"100% - 208px");
     background-color: #fff;
     height: calc(~"100% - 170px");
     padding: 10px;

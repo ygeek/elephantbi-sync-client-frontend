@@ -15,7 +15,10 @@ import Table from 'antd/lib/table'
 import 'antd/lib/table/style/css'
 import DataSourceTable from 'components/DataSourceTable'
 import moment from 'moment'
+import worksheet from 'assets/worksheet.png'
+import sizeIcon from 'assets/size.png'
 import { routerRedux } from 'dva/router'
+import { syncStatus, dslistMap } from '../config'
 import styles from './index.less'
 
 const DsDetail = ({ dsDetail, dispatch }) => {
@@ -23,6 +26,8 @@ const DsDetail = ({ dsDetail, dispatch }) => {
   const currentColumns = _.get(currentTable, 'columns', [])
   const currentRecords = _.get(currentTable, 'records', [])
   const currentTableName = _.get(currentTable, 'table_name')
+  const status = _.get(dataSource, 'sync_status')
+  const sourceType = _.get(dataSource, 'source_type')
   const { TabPane } = Tabs
   const changeColumns = (payload) => {
     dispatch({ type: 'dsDetail/changeColumns', payload })
@@ -87,7 +92,7 @@ const DsDetail = ({ dsDetail, dispatch }) => {
   )
   const changeActiveKey = (key) => {
     dispatch({ type: 'dsDetail/changeActiveKey', payload: key })
-    dispatch({ type: 'dsDetail/fetchDataSourceLog' })
+    dispatch({ type: 'dsDetail/fetchDsLog' })
     dispatch({ type: 'dsDetail/fetchDsDetail' })
   }
   return (
@@ -97,7 +102,7 @@ const DsDetail = ({ dsDetail, dispatch }) => {
           <div className={styles.leftTitle}>
             {
               _.get(dataSource, 'source_type') ? (
-                <img src={null} alt="" />
+                <img src={_.get(dslistMap, `${sourceType}.icon`)} alt="" />
               ) : null
             }
             <span>{_.get(dataSource, 'name')}</span>
@@ -115,35 +120,33 @@ const DsDetail = ({ dsDetail, dispatch }) => {
         </div>
         <div className={styles.dataInfo}>
           <span className={styles.infoItem}>
-            <img alt="" src={null} className={styles.infoImg} />
+            <img alt="" src={worksheet} className={styles.infoImg} />
             <div className={styles.info}>
               <div className={styles.infoTitle}>工作表</div>
               <div className={styles.infoContent}>{_.get(dataSource, 'worksheet_count', 0)}个</div>
             </div>
           </span>
           <span className={styles.infoItem}>
-            <img alt="" src={null} className={styles.infoImg} />
+            <img alt="" src={sizeIcon} className={styles.infoImg} />
             <div className={styles.info}>
               <div className={styles.infoTitle}>行数</div>
               <div className={styles.infoContent}>{_.get(dataSource, 'size', 0)}行</div>
             </div>
           </span>
           <span className={styles.infoItem}>
-            <img alt="" src={null} className={styles.infoImg} />
             <div className={styles.info}>
               <div className={styles.infoTitle}>数据源类型</div>
-              <div className={styles.infoContent}>MySql-客户端连接</div>
+              <div className={styles.infoContent}>{_.get(dslistMap, `${sourceType}.name`)}-客户端连接</div>
             </div>
           </span>
           <span className={styles.infoItem}>
-            <img alt="" src={null} className={styles.infoImg} />
             <div className={styles.info}>
               <div className={styles.infoTitle}>最近更新</div>
-              <div className={styles.infoContent}>{moment(_.get(dataSource, 'update_at')).format('YYYY-MM-DD HH:mm:ss')}</div>
+              <div className={styles.infoContent}>{moment(_.get(dataSource, 'updated_at')).format('YYYY-MM-DD HH:mm:ss')}</div>
             </div>
           </span>
           <span className={styles.infoItem}>
-            <img alt="" src={null} className={styles.infoImg} />
+            <img alt="" src={_.get(syncStatus, `${status}.icon`)} className={styles.infoImg} />
             <div className={styles.info}>
               <div className={styles.infoTitle}>同步状态</div>
               <div className={styles.infoContent}>离线</div>

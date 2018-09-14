@@ -18,6 +18,8 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
   const currentTransferData = _.get(dsList, 'currentTransferId');
   const shareUserList = _.get(currentTransferData, 'shared_users_list', [])
   const shareGroupList = _.get(currentTransferData, 'shared_groups_list', [])
+  const pageInfo = _.get(dsList, 'pageInfo')
+  const meta = _.get(dsList, 'meta')
   const groups = _.get(dsList, 'groups', [])
   const owner = _.get(currentTransferData, 'user', {})
   const changeCanSync = (id) => {
@@ -83,6 +85,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
       )
     })
   }
+
   return (
     <div
       className={styles.container}
@@ -94,7 +97,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
         {getDsList()}
         <button
           className={styles.loadmore}
-          style={{ display: firstLogin === 0 ? 'block' : 'none' }}
+          style={{ display: _.get(pageInfo, 'page') < _.get(meta, 'page_count') ? 'block' : 'none' }}
           onClick={() => {
             dispatch({ type: 'dsList/loadmore' });
             dispatch({ type: 'dsList/fetchDsList' })
@@ -104,9 +107,9 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
         </button>
         <div
           className={styles.deadline}
-          style={{ display: firstLogin === 0 ? 'block' : 'none' }}
+          style={{ display: _.get(pageInfo, 'page') >= _.get(meta, 'page_count')  ? 'block' : 'none' }}
         >
-          <div className={styles.divider} />我是有底线的 <div className={styles.divider}/>
+          <div className={styles.divider} />我是有底线的 (⊙ˍ⊙)<div className={styles.divider}/>
         </div>
       </div>
       <div

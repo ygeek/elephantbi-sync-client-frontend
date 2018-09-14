@@ -22,6 +22,7 @@ export default {
     groups: [],
     transferModalVisible: false,
     currentTransferId: null,
+    meta: null
   },
 
   subscriptions: {
@@ -70,6 +71,7 @@ export default {
       if (data) {
         const dsList = _.get(data, 'list', [])
         yield put({ type: 'saveDsList', payload: { [data.meta.current_page]: dsList} })
+        yield put({ type: 'setMeta', payload: data.meta })
       }
     },
     * deleteDs({ payload: id }, { select, call, put }) {
@@ -142,6 +144,9 @@ export default {
     },
     setCurrentTransferId(state, { payload: id }) {
       return { ...state, currentTransferId: id }
+    },
+    setMeta(state, { payload }) {
+      return { ...state, meta: payload }
     }
   }
 }
