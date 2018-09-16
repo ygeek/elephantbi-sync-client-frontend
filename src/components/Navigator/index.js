@@ -29,9 +29,7 @@ const Navigator = ({ dispatch, currentUser }) => {
         onClick={() => {
           dispatch(routerRedux.push('/'))
         }}
-      >
-        ElephantBI
-      </button>
+      />
       <button
         className={`${styles.ds} ${styles.click}`}
         onClick={() => {
@@ -50,9 +48,11 @@ const Navigator = ({ dispatch, currentUser }) => {
           新增数据源
         </button>
         <Dropdown overlay={menu} >
-          <img className={styles.avatar} alt="" src={avatar} />
+          <span>
+            <img className={styles.avatar} alt="" src={avatar} />   
+            <span className={styles.name}>{_.get(currentUser, 'name')}</span>
+          </span>
         </Dropdown>
-        <span className={styles.name}>{_.get(currentUser, 'name')}</span>
       </div>
     </div>
   )

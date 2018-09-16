@@ -1,6 +1,7 @@
 import dva from 'dva';
 import createHistory from 'history/createBrowserHistory';
 import './global.css';
+import './index.less'
 
 const getInitialState = () => {
   return localStorage.getItem('reduxState') ? JSON.parse(localStorage.getItem('reduxState')) : {};
