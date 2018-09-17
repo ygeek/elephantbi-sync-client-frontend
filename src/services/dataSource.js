@@ -1,3 +1,4 @@
+/*global window*/
 import { requestSimple } from '../utils/request'
 
 export async function _fetchDsDetail(id, params) {

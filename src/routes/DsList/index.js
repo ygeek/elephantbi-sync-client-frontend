@@ -44,7 +44,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
   }
 
   let data = []
-  _.forEach(list, (value, key) => {
+  _.forIn(list, (value, key) => {
     data = [...data, ...value]
   })
 
