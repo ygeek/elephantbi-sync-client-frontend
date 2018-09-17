@@ -1,9 +1,9 @@
-/* global localStorage */
+/* global window localStorage */
 import fetch from 'dva/fetch';
 import _ from 'lodash';
 import urljoin from 'url-join';
 import jsonToQuery from 'utils/url_helper';
-import { HOST } from 'constants/APIConstants';
+//import { HOST } from 'constants/APIConstants';
 
 export function getRequestHeaders() {
   const storageState = JSON.parse(localStorage.getItem('reduxState'));
@@ -33,6 +33,10 @@ function checkStatus(response) {
 }
 
 export function requestUrl({ host, url, params }) {
+  const domain = _.get(JSON.parse(localStorage.getItem('reduxState')), 'currentUser.domain')
+  const baseUrl = window.baseurl
+  const matchBaseUrl = /^(.*)\/\/(.*)$/.exec(baseUrl) || [];
+  const HOST = matchBaseUrl[1] + '//' + domain + '.' + matchBaseUrl[2];
   const reqHost = host || HOST;
   const queryString = _.isEmpty(params) ? '' : jsonToQuery(params);
   if (queryString) {

@@ -22,6 +22,7 @@ export default {
   effects: {
     * fetchToken({ payload }, { select, call, put }) {
       const { domain, ...params } = payload;
+      yield put({ type: 'currentUser/setDomain', payload: domain })
       const { err, data } = yield call(_login, params)
       if (err) {
         return new Promise((resolve, reject) => { reject(err) })

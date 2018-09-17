@@ -7,19 +7,19 @@
 <body>
   <div id="root"></div>
   <script>
-    window.corpid = 'WX_CORP_ID';
-    window.fixedUrl = 'FIXED_URL';
+    /****** env var ******/
     window.env = 'ENV';
-    window.backendUrl = 'BACKEND_URL'
-    const host = window.location.hostname;
-    const match = host.match(/^(\w+).((\w+.)+\w+)$/) || [];
-    window.baseurl = 'https://api.flexceed.com';
-    const fronturlbaseMatch = window.location.hostname.match(/^\w+.((\w+.)+\w+)$/) || [];
-    window.fronturl = fronturlbaseMatch[1];
-    const matchBaseUrl = /^(.*)\/\/(.*)$/.exec(window.baseurl) || [];
-    const windowHost = matchBaseUrl[1] + '//' + match[1] + '.' + matchBaseUrl[2];
-    window.newHost = 'http://visionpsn.flexceed.backend:5001';
-    window.host = 'http://visionpsn.flexceed.backend:5000'
+    //window.backendUrl = 'BACKEND_URL'
+    //widnow.clientBackendUrl = 'CLIENT_BACKEND_URL'
+    /****** env var ******/
+
+    window.backendUrl = 'https://api.flexceed.com' //dev test
+    window.clientBackendUrl = 'http://visionpsn.flexceed.backend:5001' //dev test
+
+    /****** for host******/
+    window.baseurl = window.backendUrl;
+    window.newHost = widnow.clientBackendUrl;
+    /****** for host ******/
   </script>
 </body>
 </html>

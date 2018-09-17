@@ -1,10 +1,10 @@
-import { requestSimple } from '../utils/request'
+import { requestSimple, requestNoToken } from '../utils/request'
 
 export async function _login(params) {
-  return requestSimple({
+  return requestNoToken({
     url: '/auth/login',
     method: 'POST',
-    body: params
+    body: params,
   })
 }
 

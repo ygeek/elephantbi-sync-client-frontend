@@ -9,6 +9,7 @@ export default {
   state: {
     firstLogin: 1,
     token: null,
+    domain: null
   },
 
   subscriptions: {
@@ -77,6 +78,9 @@ export default {
         ...state,
         ...payload
       }
+    },
+    setDomain(state, { payload: domain }) {
+      return { ...state, domain }
     }
   }
 }
