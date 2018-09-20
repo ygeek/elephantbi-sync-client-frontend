@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>提示 (3)</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="3-1数据源详情页-数据预览-copy-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-888.000000, -212.000000)">
+        <g id="Group-14" transform="translate(873.000000, 192.000000)">
+            <g id="提示-(3)" transform="translate(15.000000, 20.000000)">
+                <path d="M9,0 C4.02976,0 0,4.02974 0,9 C0,13.97026 4.02974,18 9,18 C13.97026,18 18,13.97026 18,9 C18,4.02976 13.97026,5.68434189e-16 9,0 Z" id="Shape" fill="#FFC220" fill-rule="nonzero"></path>
+                <g id="Group-21" transform="translate(8.181818, 3.272727)" fill="#FFFFFF">
+                    <polygon id="Path" points="1.83938 11.6575618 0 11.6575618 0 9.81818182 1.8405 9.81818182 1.8405 11.6575618"></polygon>
+                    <polygon id="Path" points="1.8405 8.15359091 0 8.15359091 0 0 1.8405 0"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -61,16 +61,6 @@ export async function _fetchDsLog(id) {
   })
 }
 
-export async function _changeColumns(columns) {
-  return requestSimple({
-    url: '',
-    method: 'POST',
-    body: {
-      columns
-    }
-  })
-}
-
 export async function _editDbDatasource(id, params) {
   return requestSimple({
     url: `/ds/db/${id}`,
@@ -100,5 +90,13 @@ export async function _confirmSync(id) {
   return requestSimple({
     url: `/ds/${id}/sync/confirm`,
     method: 'POST'
+  })
+}
+
+export async function _changeColumns(id, params) {
+  return requestSimple({
+    url: `/table/${id}/info`,
+    method: 'PUT',
+    body: params
   })
 }

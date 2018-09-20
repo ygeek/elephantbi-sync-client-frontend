@@ -35,6 +35,14 @@ const SynchronousMode = ({ sublimeData, changeSyncInfo, goPrev, createDs }) => {
     })
   }
   const renderForm = ({ columns, oldName, serial }) => {
+    const currentMode = _.get(syncInfo, `${oldName}.mode`)
+    let filterColumns = []
+    if (currentMode === '1') {
+      filterColumns = columns.filter(item => item.data_type === 'date')
+    }
+    if (currentMode === '2') {
+      filterColumns = columns.filter(item => item.data_type === 'number')
+    }
     return (
       <Form className={styles.formField}>
         <FormItem
@@ -65,7 +73,7 @@ const SynchronousMode = ({ sublimeData, changeSyncInfo, goPrev, createDs }) => {
                   })
                 }}
               >
-                {getColumnOption(columns)}
+                {getColumnOption(filterColumns)}
               </Select>
             </FormItem>
           ) : null

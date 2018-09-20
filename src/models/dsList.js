@@ -25,7 +25,9 @@ export default {
     groups: [],
     transferModalVisible: false,
     currentTransferId: null,
-    meta: null
+    meta: null,
+    loadingCount: 0,
+    syncStatus: null
   },
 
   subscriptions: {
@@ -36,6 +38,8 @@ export default {
        if (match) {
          dispatch({ type: 'checkStatus' })
          dispatch({ type: 'fetchUsers' })
+       } else {
+         dispatch({ type: 'clearState' })
        }
      })
     }
@@ -48,6 +52,7 @@ export default {
     },
     * fetchAllDsList(action, { select, call, put }) { //5001
       const { data } = yield call(_fetchDsList, { all: 1 });
+      yield put({ type: 'changeLoading', payload: 'add' })
       if (data && data.status >= 200 && data.status < 300) {
         const dsList = _.get(data, 'data.list', [])
         const canSync = []
@@ -59,9 +64,11 @@ export default {
         yield put({ type: 'saveCanSync', payload: canSync })
         yield put({ type: 'saveDsList', payload: dsList })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * fetchDsList(action, { select, call, put }) { //5001
       const { pageInfo } = yield select(state => state.dsList)
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { data } = yield call(_fetchDsList, {
         page: pageInfo.page,
         page_size: pageInfo.pageSize
@@ -71,49 +78,68 @@ export default {
         yield put({ type: 'saveDsList', payload: { [data.data.meta.current_page]: dsList} })
         yield put({ type: 'setMeta', payload: data.meta })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * deleteDs({ payload: id }, { select, call, put }) {
       const { data } = yield call(_deleteDs, id);
+      yield put({ type: 'changeLoading', payload: 'add' })
       if (data) {
         yield put({ type: 'resetPageInfo' });
         yield put({ type: 'fetchDsList' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * fetchUsers(action, { select, put, call }) {
       const { data } = yield call(_fetchUsers);
+      yield put({ type: 'changeLoading', payload: 'add' })
       if (data) {
         yield put({ type: 'setUsers', payload: data })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * tranferUser({ payload }, { select, call, put }) {
       const { currentTransferId } = yield select(state => state.dsList);
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { data } = yield call(_tranferUser, payload, currentTransferId)
       if (data) {
         yield put({ type: 'fetchDsList' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * confirmSync({ payload: id }, { select, call, put }) {
       const { data } = yield call(_confirmSync, id)
+      yield put({ type: 'changeLoading', payload: 'add' })
       if (data && data.success) {
         yield put({ type: 'fetchDsList' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * startSync({ payload }, { select, call, put }) { //5001
       const { id, type } = payload
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { data } = yield call(_startSync, id, { sync_now: type })
       if (data && data.success) {
         yield put({ type: 'fetchDsList' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * stopSync({ payload: dataSourceId }, { select, call, put }) { //5001
       const { data } = yield call(_stopSync, dataSourceId)
+      yield put({ type: 'changeLoading', payload: 'add' })
       if (data && data.success) {
         yield put({ type: 'fetchDsList' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     }
   },
 
   reducers: {
+    changeLoading(state, { payload }) {
+      return {
+        ...state,
+        loadingCount: payload === 'add' ? state.loadingCount + 1 : state.loadingCount - 1
+      }
+    },
     saveDsList(state, { payload }) {
       return {
         ...state,
@@ -156,6 +182,29 @@ export default {
     },
     setMeta(state, { payload }) {
       return { ...state, meta: payload }
+    },
+    clearState(state) {
+      return {
+        ...state,
+        list: [],
+        pageInfo: {
+          page: 1,
+          pageSize: 12
+        },
+        canSync: [],
+        users: [],
+        groups: [],
+        transferModalVisible: false,
+        currentTransferId: null,
+        meta: null,
+        loadingCount: 0
+      }
+    },
+    setSyncStatus(state, { payload }) {
+      return {
+        ...state,
+        syncStatus: payload
+      }
     }
   }
 }

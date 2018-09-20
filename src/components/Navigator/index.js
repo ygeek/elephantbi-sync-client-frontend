@@ -3,6 +3,8 @@ import { connect } from 'dva';
 import { Dropdown, Menu } from 'antd'
 import { routerRedux } from 'dva/router'
 import avatar from 'assets/avatar.jpg'
+import { WEBSOCKETURL } from 'constants/APIConstants'
+import Websocket from 'react-websocket';
 import _ from 'lodash'
 import styles from './index.less';
 
@@ -22,8 +24,24 @@ const Navigator = ({ dispatch, currentUser }) => {
       <MenuItem key="logout">登出</MenuItem>
     </Menu>
   )
+  const handleSocket = (data) => {
+    const jsonData = JSON.parse(data)
+    if (_.get(jsonData, 'msg_title') === 'SYNC_PROGRESS') { // 数据源同步时间
+      dispatch({ type: 'dsDetail/setSyncTime', payload: jsonData })
+      return
+    }
+    if (_.get(jsonData, 'msg_title') === 'SYNC_STATUS') { // 数据源同步状态
+      dispatch({ type: 'dsDetail/setSyncStatus', payload: jsonData })
+      dispatch({ type: 'dsList/setSyncStatus', payload: jsonData })
+      return
+    }
+  }
   return (
     <div className={styles.container}>
+      <Websocket
+        url={WEBSOCKETURL(currentUser.id)}
+        onMessage={handleSocket}
+      />
       <button
         className={`${styles.logo} ${styles.click}`}
         onClick={() => {

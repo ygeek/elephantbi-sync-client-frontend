@@ -100,7 +100,7 @@ class AccountInformation extends React.Component {
                   getFieldDecorator('password', {
                     rules: [{ required: true, message: '此项必填' }]
                   })(
-                    <Input type="password" />
+                    <Input type="password" autoComplete="new-password" />
                   )
                 }
               </FormItem>

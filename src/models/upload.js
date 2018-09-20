@@ -15,7 +15,8 @@ export default {
     sublimeData: null,
     tableColumns: null,
     description: null,
-    dbType: null
+    dbType: null,
+    loadingCount: 0
   },
 
   subscriptions: {
@@ -39,6 +40,7 @@ export default {
   effects: {
     * connectDatabase(action, { select, call, put }) { //5001
       const { databaseInfo, dbType } = yield select(state => state.upload);
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { data, err } = yield call(_connectDatabase, {
         ...databaseInfo,
         db_type: `${dbType}`
@@ -47,10 +49,12 @@ export default {
         yield put({ type: 'saveTableColumns', payload: data.data })
         yield put({ type: 'fetchdbDataSource' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
 
     * fetchdbDataSource(action, { select, call, put }) { //5001
       const { databaseInfo, dbType } = yield select(state => state.upload)
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { data, err } = yield call(_fetchDbDataSource, {
         ...databaseInfo,
         db_type: `${dbType}`
@@ -59,6 +63,7 @@ export default {
         yield put({ type: 'saveDataSource', payload: data.data })
         yield put({ type: 'changeStep', payload: 'after' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
 
     * createDbDs(action, { select, call, put }) {
@@ -69,6 +74,7 @@ export default {
         sourceType,
         filterTableList
       } = yield select(state => state.upload)
+      yield put({ type: 'changeLoading', payload: 'add' })
       const params = {
         ...databaseInfo,
         db_type: dbType,
@@ -80,10 +86,17 @@ export default {
       if (data) {
         yield put(routerRedux.push('/dataSource/list'))
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     }
   },
 
   reducers: {
+    changeLoading(state, { payload }) {
+      return {
+        ...state,
+        loadingCount: payload === 'add' ? state.loadingCount + 1 : state.loadingCount - 1
+      }
+    },
     changeFilterTableList(state, { payload }) {
       return { ...state, filterTableList: payload }
     },

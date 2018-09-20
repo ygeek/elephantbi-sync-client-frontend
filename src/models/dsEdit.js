@@ -17,7 +17,8 @@ export default {
     date: 'last',
     retry: true,
     retryInterval: '30sec',
-    retryMost: '1'
+    retryMost: '1',
+    loadingCount: 0
   },
 
   subscriptions: {
@@ -28,6 +29,8 @@ export default {
        if (match) {
          dispatch({ type: 'saveDsId', payload: match[1] })
          dispatch({ type: 'fetchTableIds' })
+       } else {
+         dispatch({ type: 'clearState' })
        }
      })
     }
@@ -36,6 +39,7 @@ export default {
   effects: {
     * fetchTableIds(action, { select, call, put }) {
       const { dsId } = yield select(state => state.dsEdit)
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { data, err } = yield call(_fetchTableIds, dsId)
       if (err) {
 
@@ -44,10 +48,12 @@ export default {
         yield put({ type: 'setTableIds', payload: data })
         yield put({ type: 'fetchDataSourceDetail' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
 
     * fetchDataSourceDetail(action, { select, call, put }) {
       const { dsId } = yield select(state => state.dsEdit)
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { data, err } = yield call(_fetchDsDetail, dsId)
       if (err) {
 
@@ -55,10 +61,12 @@ export default {
       if (data) {
         yield put({ type: 'setDataSource', payload: data })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
 
     * editDbDatasource({ payload }, { select, call, put }) {
-      const { sublimeData, dataSource } = yield select(state => state.dsEdit)
+      const { sublimeData, dataSource, dsId } = yield select(state => state.dsEdit)
+      yield put({ type: 'changeLoading', payload: 'add' })
       const dbId = _.get(dataSource, 'database.id')
       const {
         db_name: dbName,
@@ -72,13 +80,14 @@ export default {
         ...tableNames
       } = payload
       const params = {
-        db_name: dbName,
+        ds_id: dsId,
+        db_name: dbName || _.get(sublimeData, 'name'), //数据库名
         description,
-        host,
-        port,
-        name,
-        password,
-        username,
+        host: host || _.get(sublimeData, 'host'),
+        port: port || _.get(sublimeData, 'port'),
+        name: name || _.get(sublimeData, 'name'), //数据源名
+        password: password || _.get(sublimeData, 'password'),
+        username: username || _.get(sublimeData, 'username'),
         tableNames,
         sync_mode: sublimeData.syncMode,
         ...sublimeData.syncInfo
@@ -87,10 +96,17 @@ export default {
       if (data) {
         yield put(routerRedux.goBack())
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     }
   },
 
   reducers: {
+    changeLoading(state, { payload }) {
+      return {
+        ...state,
+        loadingCount: payload === 'add' ? state.loadingCount + 1 : state.loadingCount - 1
+      }
+    },
     saveDsId(state, { payload }) {
       return { ...state, dsId: payload }
     },
@@ -118,6 +134,7 @@ export default {
         ...state,
         dataSource: payload,
         sublimeData: {
+          ...payload.database,
           syncInfo,
           syncMode
         },
@@ -169,6 +186,23 @@ export default {
             }
           }
         }
+      }
+    },
+    clearState(state) {
+      return {
+        ...state,
+        dsId: null,
+        cycle: 'hour',
+        startTime: '06:00',
+        endTime: '09:00',
+        time: '06:00',
+        week: 'Mon',
+        month: 'Jan',
+        date: 'last',
+        retry: true,
+        retryInterval: '30sec',
+        retryMost: '1',
+        loadingCount: 0
       }
     }
   }

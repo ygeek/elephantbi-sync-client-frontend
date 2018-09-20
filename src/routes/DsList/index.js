@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'dva'
 import _ from 'lodash'
+import { Spin } from 'antd'
 import Modal from 'antd/lib/modal'
 import 'antd/lib/modal/style/css'
 import { routerRedux } from 'dva/router'
@@ -19,9 +20,11 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
   const shareUserList = _.get(currentTransferData, 'shared_users_list', [])
   const shareGroupList = _.get(currentTransferData, 'shared_groups_list', [])
   const pageInfo = _.get(dsList, 'pageInfo')
+  const loadingCount = _.get(dsList, 'loadingCount', 0)
   const meta = _.get(dsList, 'meta')
   const groups = _.get(dsList, 'groups', [])
   const owner = _.get(currentTransferData, 'user', {})
+  const syncStatus = _.get(dsList, 'syncStatus', null)
   const changeCanSync = (id) => {
     dispatch({ type: 'dsList/changeCanSync', payload: id })
   }
@@ -46,6 +49,12 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
   let data = []
   _.forIn(list, (value, key) => {
     data = [...data, ...value]
+  })
+  data = data.map((item) => {
+    if (`${item.id}` === `${_.get(syncStatus, 'ds_id')}`) {
+      return { ...item, sync_status: _.get(syncStatus, 'ds_status') }
+    }
+    return item
   })
 
   const showTransfer = (id) => {
@@ -103,59 +112,62 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
   }
 
   return (
-    <div
-      className={styles.container}
-    >
+    <Spin spinning={loadingCount > 0}>
       <div
-        className={styles.content}
-        style={{ height: firstLogin === 1 ? 'calc(100% - 50px)' : '100%' }}
+        className={styles.container}
       >
-        {getDsList()}
-        <button
-          className={styles.loadmore}
-          style={{ display: _.get(pageInfo, 'page') < _.get(meta, 'page_count') ? 'block' : 'none' }}
-          onClick={() => {
-            dispatch({ type: 'dsList/loadmore' });
-            dispatch({ type: 'dsList/fetchDsList' })
-          }}
-        >
-          加载更多
-        </button>
         <div
-          className={styles.deadline}
-          style={{ display: _.get(pageInfo, 'page') >= _.get(meta, 'page_count')  ? 'block' : 'none' }}
+          className={styles.content}
+          style={{ height: firstLogin === 1 ? 'calc(100% - 50px)' : '100%' }}
         >
-          <div className={styles.divider} />我是有底线的 (⊙ˍ⊙)<div className={styles.divider}/>
+          {getDsList()}
+          <button
+            className={styles.loadmore}
+            style={{ display: _.get(pageInfo, 'page') < _.get(meta, 'page_count') ? 'block' : 'none' }}
+            onClick={() => {
+              dispatch({ type: 'dsList/loadmore' });
+              dispatch({ type: 'dsList/fetchDsList' })
+            }}
+          >
+            加载更多
+          </button>
+          <div
+            className={styles.deadline}
+            style={{ display: _.get(pageInfo, 'page') >= _.get(meta, 'page_count')  ? 'block' : 'none' }}
+          >
+            <div className={styles.divider} />我是有底线的 (⊙ˍ⊙)<div className={styles.divider}/>
+          </div>
         </div>
-      </div>
-      <div
-        className={styles.footer}
-        style={{ display: firstLogin === 1 ? 'block' : 'none' }}
-      >
-        <Footer
-          text1="跳过"
-          text2="开始同步"
-          click1={() => {
-            dispatch({ type: 'currentUser/changeStatus' })
-            dispatch({ type: 'dsList/fetchDsList' })
-          }}
-          click2={() => {
-            dispatch({ type: 'currentUser/changeStatus' })
-            dispatch({ type: 'dsList/fetchDsList' })
-          }}
+        <div
+          className={styles.footer}
+          style={{ display: firstLogin === 1 ? 'block' : 'none' }}
+        >
+          <Footer
+            text1="跳过"
+            text2="开始同步"
+            click1={() => {
+              dispatch({ type: 'currentUser/changeStatus' })
+              dispatch({ type: 'dsList/fetchDsList' })
+            }}
+            click2={() => {
+              dispatch({ type: 'currentUser/changeStatus' })
+              dispatch({ type: 'dsList/fetchDsList' })
+            }}
+          />
+        </div>
+        <TransferModal
+          visible={transferModalVisible}
+          closeTransfer={closeTransfer}
+          users={users}
+          groups={[]}
+          shareList={shareUserList}
+          shareGroups={shareGroupList}
+          owner={owner}
+          onSubmit={transferOwner}
         />
       </div>
-      <TransferModal
-        visible={transferModalVisible}
-        closeTransfer={closeTransfer}
-        users={users}
-        groups={[]}
-        shareList={shareUserList}
-        shareGroups={shareGroupList}
-        owner={owner}
-        onSubmit={transferOwner}
-      />
-    </div>
+    </Spin>
+
   )
 }
 

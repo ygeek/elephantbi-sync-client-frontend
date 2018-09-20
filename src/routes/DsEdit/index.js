@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva'
 import Tabs from 'antd/lib/tabs'
 import 'antd/lib/tabs/style/css'
+import { Spin } from 'antd'
 import _ from 'lodash'
 import Form from 'antd/lib/form'
 import 'antd/lib/form/style/css'
@@ -26,6 +27,7 @@ const DsEdit = ({ dsEdit, dispatch, form }) => {
   const syncInfo = _.get(dsEdit, 'sublimeData.syncInfo')
   const tableToColumns = _.get(dsEdit, 'tableToColumns')
   const syncMode = _.get(dsEdit, 'sublimeData.syncMode')
+  const loadingCount = _.get(dsEdit, 'loadingCount', 0)
   const changeSyncInfo = (params) => {
     dispatch({ type: 'dsEdit/changeSyncInfo', payload: params })
   }
@@ -104,26 +106,28 @@ const DsEdit = ({ dsEdit, dispatch, form }) => {
     })
   }
   return (
-    <div className={styles.container}>
-      <div className={styles.wrapper}>
-        <div className={styles.content}>
-          <div className={styles.title}>编辑数据源</div>
-          <Tabs>
-            {
-              getTabPanes(config)
-            }
-          </Tabs>
+    <Spin spinning={loadingCount > 0}>
+      <div className={styles.container}>
+        <div className={styles.wrapper}>
+          <div className={styles.content}>
+            <div className={styles.title}>编辑数据源</div>
+            <Tabs>
+              {
+                getTabPanes(config)
+              }
+            </Tabs>
+          </div>
         </div>
+        <Footer
+          text1="取消"
+          text2="保存"
+          click1={() => {}}
+          click2={() => {
+            onSubmit()
+          }}
+        />
       </div>
-      <Footer
-        text1="取消"
-        text2="保存"
-        click1={() => {}}
-        click2={() => {
-          onSubmit()
-        }}
-      />
-    </div>
+    </Spin>
   )
 }
 

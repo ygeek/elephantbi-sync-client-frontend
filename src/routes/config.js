@@ -20,7 +20,8 @@ export const syncStatusMap = {
   2: { name: '等待同步', icon: waiting },
   3: { name: '同步中', icon: inSync },
   4: { name: '同步正常', icon: success },
-  5: { name: '同步异常', icon: failure }
+  5: { name: '同步失败', icon: failure },
+  6: { name: '同步异常', icon: failure }
 }
 
 export const example = []
@@ -55,11 +56,11 @@ export const isDataBase = (sourceType) => {
 export const menuConfig = (syncStatus, source, sourceType) => ([{
   title: '查看详细信息', key: 'detail', auth: source === 'list'
 }, {
-  title: '立即触发同步', key: 'trigger', auth: [2, 4, 5].includes(syncStatus) && isDataBase(sourceType)
+  title: '立即触发同步', key: 'trigger', auth: [2, 4, 6].includes(syncStatus) && isDataBase(sourceType)
 }, {
-  title: '停止同步', key: 'stop', auth: [2, 3, 4, 5].includes(syncStatus) && isDataBase(sourceType)
+  title: '停止同步', key: 'stop', auth: [2, 3, 4, 6].includes(syncStatus) && isDataBase(sourceType)
 }, {
-  title: '开始同步', key: 'start', auth: [0, 6].includes(syncStatus) && isDataBase(sourceType)
+  title: '开始同步', key: 'start', auth: [0, 5].includes(syncStatus) && isDataBase(sourceType)
 }, {
   title: '同步确认', key: 'confirm', auth: [1].includes(syncStatus) && isDataBase(sourceType)
 }, {

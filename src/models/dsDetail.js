@@ -26,7 +26,9 @@ export default {
     dsLog: [],
     currentTable: null,
     transferModalVisible: false,
-    users: []
+    users: [],
+    loadingCount: 0,
+    syncTime: null
   },
 
   subscriptions: {
@@ -38,6 +40,8 @@ export default {
          dispatch({ type: 'saveDsId', payload: match[1] })
          dispatch({ type: 'fetchTableIds' })
          dispatch({ type: 'fetchUsers' })
+       } else {
+         dispatch({ type: 'clearState' })
        }
      })
     }
@@ -45,6 +49,7 @@ export default {
 
   effects: {
     * fetchTableIds(action, { select, call, put }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { dsId } = yield select(state => state.dsDetail)
       const { data } = yield call(_fetchTableIds, dsId)
       if (data) {
@@ -54,83 +59,111 @@ export default {
           yield put({ type: 'fetchDsLog' })
         }
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * fetchDsDetail(action, { select, call, put }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { dsId, tableIds, activeKey } = yield select(state => state.dsDetail)
-      const tableId = tableIds[activeKey].id
+      const tableId = _.get(tableIds[activeKey], 'id', null)
       const { data } = yield call(_fetchDsDetail, dsId, { table_id: tableId })
       if (data) {
         yield put({ type: 'saveDsDetail', payload: data })
         const table = _.get(data, 'tables[0]');
         yield put({ type: 'saveCurrentTable', payload: table })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
 
     * fetchDsLog(action, { select, call, put }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { activeKey, tableIds } = yield select(state => state.dsDetail)
       const tableId = tableIds[activeKey].id
       const { data } = yield call(_fetchDsLog, tableId)
       if (data) {
         yield put({ type: 'setDsLog', payload: data.list })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * changeColumns({ payload }, { select, call, put }) {
-      const { params, serial } = payload;
-      const { currentTable } = yield select(state => state.dsDetail)
-      const originColumn = _.get(currentTable, 'columns', [])
-      const newColumns = originColumn.map((column, index) => {
-        if (index !== serial) {
-          return column
+      yield put({ type: 'changeLoading', payload: 'add' })
+      const { params, serial } = payload
+      const { dsDetail } = yield select(state => state.dsDetail)
+      const columns = _.get(dsDetail, 'tables[0].columns')
+      const tableId = _.get(dsDetail, 'tables[0].table_id')
+      const newColumns = columns.map((column, index) => {
+        if (index === serial) {
+          return { ...column, ...(params || {}) }
         }
-        return { ...column, ...params }
+        return column
       })
-      const { data } = yield call(_changeColumns, newColumns)
+      const { data, err } = yield call(_changeColumns, tableId, { columns: newColumns })
       if (data) {
         yield put({ type: 'fetchDsDetail' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * tranferUser({ payload }, { select, call, put }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { dsId } = yield select(state => state.dsDetail);
       const { data } = yield call(_tranferUser, payload, dsId)
       if (data) {
         yield put(routerRedux.push('/dataSource/list'))
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * deleteDs(action, { select, call, put }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { dsId } = yield select(state => state.dsDetail)
       const { data } = yield call(_deleteDs, dsId)
       if (data) {
         yield put(routerRedux.push('/dataSource/list'))
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
-    * confirmSync({ payload: id }, { select, call, put }) {
-      const { data } = yield call(_confirmSync, id)
-      if (data && data.success) {
+    * startSync({ payload: type }, { select, call, put }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
+      const { dsId } = yield select(state => state.dsDetail)
+      const { data } = yield call(_startSync, dsId, { sync_now: type })
+      if (data) {
         yield put({ type: 'fetchDsDetail' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
-    * startSync({ payload }, { select, call, put }) { //5001
-      const { id, type } = payload
-      const { data } = yield call(_startSync, id, { sync_now: type })
-      if (data && data.success) {
-        yield put({ type: 'fetchDsDetail' })
-      }
-    },
-    * stopSync(action, { select, call, put }) { //5001
+    * stopSync(action, { select, call, put }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { dsId } = yield select(state => state.dsDetail)
       const { data } = yield call(_stopSync, dsId)
-      if (data && data.success) {
+      if (data) {
+        yield put({ type: 'fetchDsDetail' })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
+    },
+    * confirmSync(action, { select, call, put }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
+      const { dsId } = yield select(state => state.dsDetail)
+      const { data } = yield call(_confirmSync, dsId)
+      if (data) {
+        yield put({ type: 'fetchDsDetail' })
+      }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
     * fetchUsers(action, { select, put, call }) {
+      yield put({ type: 'changeLoading', payload: 'add' })
       const { data } = yield call(_fetchUsers);
       if (data) {
         yield put({ type: 'setUsers', payload: data })
       }
+      yield put({ type: 'changeLoading', payload: 'sub' })
     },
   },
 
   reducers: {
+    changeLoading(state, { payload }) {
+      return {
+        ...state,
+        loadingCount: payload === 'add' ? state.loadingCount + 1 : state.loadingCount - 1
+      }
+    },
     saveDsId(state, { payload }) {
       return { ...state, dsId: payload }
     },
@@ -157,6 +190,45 @@ export default {
     },
     hideTransferModal(state) {
       return { ...state, transferModalVisible: false }
+    },
+    clearState(state) {
+      return {
+        ...state,
+        dsId: null,
+        tableIds: [],
+        activeKey: '0',
+        dsDetail: null,
+        dsLog: [],
+        currentTable: null,
+        transferModalVisible: false,
+        users: [],
+        loadingCount: 0,
+        syncTime: null
+      }
+    },
+    setSyncTime(state, { payload }) {
+      const id = _.get(payload, 'ds_id')
+      if (`${id}` === `${state.dsId}`) {
+        return {
+          ...state,
+          syncTime: payload
+        }
+      }
+      return state
+    },
+    setSyncStatus(state, { payload }) {
+      const id = _.get(payload, 'ds_id')
+      if (`${id}` === `${state.dsId}`) {
+        const syncStatus = _.get(payload, 'ds_status')
+        return {
+          ...state,
+          dataSource: {
+            ...state.dataSource,
+            sync_status: syncStatus
+          }
+        }
+      }
+      return state
     }
   }
 }

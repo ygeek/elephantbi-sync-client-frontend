@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva'
 import Steps from 'antd/lib/steps';
 import 'antd/lib/steps/style/css'
+import { Spin } from 'antd'
 import _ from 'lodash';
 import { routerRedux } from 'dva/router'
 import { stepConfig } from './config';
@@ -22,7 +23,8 @@ const Database = ({ upload, dispatch }) => {
     sublimeData,
     sourceType,
     filterTableList,
-    dbType
+    dbType,
+    loadingCount
   } = upload;
   console.log('1111111111111', upload)
   const cancel = () => {
@@ -72,75 +74,77 @@ const Database = ({ upload, dispatch }) => {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.content}>
-        <div className={styles.title}>连接数据库</div>
-        <div className={styles.steps}>
-          <Steps size="small" current={currentStep}>
-            {stepConfig.map((step, index) => <Step key={index} title={step.title} />)}
-          </Steps>
-        </div>
-        <div className={styles.stepContent}>
-          {
-            currentStep === 0 ? (
-              <AccountInformation
-                dispatch={dispatch}
-                cancel={cancel}
-                goAfter={goAfter}
-              />
-            ) : null
-          }
-          {
-            currentStep === 1 ? (
-              <SelectWorksheet
-                dataSource={dataSource}
-                dispatch={dispatch}
-                sublimeData={sublimeData}
-                changeTableToColumns={changeTableToColumns}
-                changeFilterTableList={changeFilterTableList}
-                filterTableNames={filterTableNames}
-                goPrev={goPrev}
-                goAfter={goAfter}
-                filterTableList={filterTableList}
-              />
-            ) : null
-          }
-          {
-            currentStep === 2 ? (
-              <BasicInformation
-                sublimeData={sublimeData}
-                sourceType={sourceType}
-                goPrev={goPrev}
-                goAfter={goAfter}
-                changeTableNames={changeTableNames}
-                changeFileName={changeFileName}
-                changeDescription={changeDescription}
-                filterTableList={filterTableList}
-              />
-            ) : null
-          }
-          {
-            currentStep === 3 ? (
-              <SynchronizationCycle
-                goPrev={goPrev}
-                goAfter={goAfter}
-                submitSyncCycle={submitSyncCycle}
-              />
-            ) : null
-          }
-          {
-            currentStep === 4 ? (
-              <SynchronousMode
-                sublimeData={sublimeData}
-                changeSyncInfo={changeSyncInfo}
-                goPrev={goPrev}
-                createDs={createDs}
-              />
-            ) : null
-          }
+    <Spin spinning={loadingCount > 0}>
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <div className={styles.title}>连接数据库</div>
+          <div className={styles.steps}>
+            <Steps size="small" current={currentStep}>
+              {stepConfig.map((step, index) => <Step key={index} title={step.title} />)}
+            </Steps>
+          </div>
+          <div className={styles.stepContent}>
+            {
+              currentStep === 0 ? (
+                <AccountInformation
+                  dispatch={dispatch}
+                  cancel={cancel}
+                  goAfter={goAfter}
+                />
+              ) : null
+            }
+            {
+              currentStep === 1 ? (
+                <SelectWorksheet
+                  dataSource={dataSource}
+                  dispatch={dispatch}
+                  sublimeData={sublimeData}
+                  changeTableToColumns={changeTableToColumns}
+                  changeFilterTableList={changeFilterTableList}
+                  filterTableNames={filterTableNames}
+                  goPrev={goPrev}
+                  goAfter={goAfter}
+                  filterTableList={filterTableList}
+                />
+              ) : null
+            }
+            {
+              currentStep === 2 ? (
+                <BasicInformation
+                  sublimeData={sublimeData}
+                  sourceType={sourceType}
+                  goPrev={goPrev}
+                  goAfter={goAfter}
+                  changeTableNames={changeTableNames}
+                  changeFileName={changeFileName}
+                  changeDescription={changeDescription}
+                  filterTableList={filterTableList}
+                />
+              ) : null
+            }
+            {
+              currentStep === 3 ? (
+                <SynchronizationCycle
+                  goPrev={goPrev}
+                  goAfter={goAfter}
+                  submitSyncCycle={submitSyncCycle}
+                />
+              ) : null
+            }
+            {
+              currentStep === 4 ? (
+                <SynchronousMode
+                  sublimeData={sublimeData}
+                  changeSyncInfo={changeSyncInfo}
+                  goPrev={goPrev}
+                  createDs={createDs}
+                />
+              ) : null
+            }
+          </div>
         </div>
       </div>
-    </div>
+    </Spin>
   )
 }
 
