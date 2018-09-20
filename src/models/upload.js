@@ -91,6 +91,21 @@ export default {
   },
 
   reducers: {
+    resetState(state) {
+      return {
+        ...state,
+        filterTableList: [],
+        sourceType: null,
+        currentStep: 0,
+        databaseInfo: null,
+        dataSource: null,
+        sublimeData: null,
+        tableColumns: null,
+        description: null,
+        dbType: null,
+        loadingCount: 0
+      }
+    },
     changeLoading(state, { payload }) {
       return {
         ...state,
