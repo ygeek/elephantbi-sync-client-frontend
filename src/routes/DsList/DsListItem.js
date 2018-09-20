@@ -38,6 +38,7 @@ const DsListItem = ({
       okText: '停止并继续',
       type: 'warning',
       onOk() {
+        stopSync(data.id)
         method(id, type);
       }
     })
