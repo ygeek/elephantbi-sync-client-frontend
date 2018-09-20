@@ -109,7 +109,7 @@ export default {
     * confirmSync({ payload: id }, { select, call, put }) {
       const { data } = yield call(_confirmSync, id)
       yield put({ type: 'changeLoading', payload: 'add' })
-      if (data && data.success) {
+      if (data && data.data.success) {
         yield put({ type: 'fetchDsList' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
@@ -118,7 +118,7 @@ export default {
       const { id, type } = payload
       yield put({ type: 'changeLoading', payload: 'add' })
       const { data } = yield call(_startSync, id, { sync_now: type })
-      if (data && data.success) {
+      if (data && data.data.success) {
         yield put({ type: 'fetchDsList' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
@@ -126,7 +126,7 @@ export default {
     * stopSync({ payload: dataSourceId }, { select, call, put }) { //5001
       const { data } = yield call(_stopSync, dataSourceId)
       yield put({ type: 'changeLoading', payload: 'add' })
-      if (data && data.success) {
+      if (data && data.data.success) {
         yield put({ type: 'fetchDsList' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })

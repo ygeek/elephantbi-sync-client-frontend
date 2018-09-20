@@ -124,7 +124,7 @@ export default {
       yield put({ type: 'changeLoading', payload: 'add' })
       const { dsId } = yield select(state => state.dsDetail)
       const { data } = yield call(_startSync, dsId, { sync_now: type })
-      if (data) {
+      if (data && data.data.success) {
         yield put({ type: 'fetchDsDetail' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
@@ -133,7 +133,7 @@ export default {
       yield put({ type: 'changeLoading', payload: 'add' })
       const { dsId } = yield select(state => state.dsDetail)
       const { data } = yield call(_stopSync, dsId)
-      if (data) {
+      if (data && data.data.success) {
         yield put({ type: 'fetchDsDetail' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
@@ -142,7 +142,7 @@ export default {
       yield put({ type: 'changeLoading', payload: 'add' })
       const { dsId } = yield select(state => state.dsDetail)
       const { data } = yield call(_confirmSync, dsId)
-      if (data) {
+      if (data && data.data.success) {
         yield put({ type: 'fetchDsDetail' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
