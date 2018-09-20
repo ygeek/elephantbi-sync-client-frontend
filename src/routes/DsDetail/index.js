@@ -108,7 +108,7 @@ const DsDetail = ({ dsDetail, dispatch }) => {
     />
   )
   const toEdit = (id) => {
-    dispatch(routerRedux.push(`/dbEdit/${id}`))
+    dispatch(routerRedux.push(`/ds/edit/${id}`))
   }
   const startSync = () => {
     dispatch({ type: 'dsDetail/startSync', payload: 0 });
