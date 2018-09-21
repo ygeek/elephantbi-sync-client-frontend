@@ -53,7 +53,7 @@ export default {
     * fetchAllDsList(action, { select, call, put }) { //5001
       const { data } = yield call(_fetchDsList, { all: 1 });
       yield put({ type: 'changeLoading', payload: 'add' })
-      if (data && data.status >= 200 && data.status < 300) {
+      if (data) {
         const dsList = _.get(data, 'data.list', [])
         const canSync = []
         _.forEach(dsList, (item) => {
@@ -73,7 +73,7 @@ export default {
         page: pageInfo.page,
         page_size: pageInfo.pageSize
       });
-      if (data && data.status >= 200 && data.status < 300) {
+      if (data) {
         const dsList = _.get(data, 'data.list', [])
         yield put({ type: 'saveDsList', payload: { [data.data.meta.current_page]: dsList} })
         yield put({ type: 'setMeta', payload: data.meta })
@@ -109,7 +109,7 @@ export default {
     * confirmSync({ payload: id }, { select, call, put }) {
       const { data } = yield call(_confirmSync, id)
       yield put({ type: 'changeLoading', payload: 'add' })
-      if (data && data.data.success) {
+      if (data && data.success) {
         yield put({ type: 'fetchDsList' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
@@ -118,7 +118,7 @@ export default {
       const { id, type } = payload
       yield put({ type: 'changeLoading', payload: 'add' })
       const { data } = yield call(_startSync, id, { sync_now: type })
-      if (data && data.data.success) {
+      if (data && data.success) {
         yield put({ type: 'fetchDsList' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
@@ -126,7 +126,7 @@ export default {
     * stopSync({ payload: dataSourceId }, { select, call, put }) { //5001
       const { data } = yield call(_stopSync, dataSourceId)
       yield put({ type: 'changeLoading', payload: 'add' })
-      if (data && data.data.success) {
+      if (data && data.success) {
         yield put({ type: 'fetchDsList' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })

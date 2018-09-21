@@ -45,7 +45,7 @@ export default {
         ...databaseInfo,
         db_type: `${dbType}`
       });
-      if (data && data.status >= 200 && data.status < 300) {
+      if (data) {
         yield put({ type: 'saveTableColumns', payload: data.data })
         yield put({ type: 'fetchdbDataSource' })
       }
@@ -59,7 +59,7 @@ export default {
         ...databaseInfo,
         db_type: `${dbType}`
       })
-      if (data && data.status >= 200 && data.status < 300) {
+      if (data) {
         yield put({ type: 'saveDataSource', payload: data.data })
         yield put({ type: 'changeStep', payload: 'after' })
       }
