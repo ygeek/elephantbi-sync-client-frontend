@@ -24,12 +24,21 @@ const SynchronousMode = ({ tableToColumns, tableNames, changeSyncMode, syncMode 
       return <Option key={option.value || option.name}>{option.title || option.name}</Option>
     })
   }
+
   const getColumnOption = (columns) => {
     return _.map(columns, (option) => {
       return <Option key={option.unique_id}>{option.name}</Option>
     })
   }
   const renderForm = ({ columns, oldName, serial }) => {
+    const currentMode = _.get(syncMode, `${oldName}.mode`)
+    let filterColumns = []
+    if (currentMode === '1') {
+      filterColumns = columns.filter(item => item.data_type === 'date')
+    }
+    if (currentMode === '2') {
+      filterColumns = columns.filter(item => item.data_type === 'number')
+    }
     return (
       <Form className={styles.formField}>
         <FormItem
@@ -60,7 +69,7 @@ const SynchronousMode = ({ tableToColumns, tableNames, changeSyncMode, syncMode 
                   })
                 }}
               >
-                {getColumnOption(columns)}
+                {getColumnOption(filterColumns)}
               </Select>
             </FormItem>
           ) : null

@@ -37,7 +37,7 @@ const DsEdit = ({ dsEdit, dispatch, form }) => {
   }
 
   const changeSyncMode = (name, params) => {
-    dispatch({ type: 'dbEdit/changeSyncMode', payload: { name, params } })
+    dispatch({ type: 'dsEdit/changeSyncMode', payload: { name, params } })
   }
   const config = [
     {
