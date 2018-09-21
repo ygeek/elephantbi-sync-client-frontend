@@ -75,6 +75,17 @@ export default {
         filterTableList
       } = yield select(state => state.upload)
       yield put({ type: 'changeLoading', payload: 'add' })
+      const tableToColumns = _.get(sublimeData, 'table_to_columns', {})
+      const tableNames = _.get(sublimeData, 'table_names', [])
+      const tempTableToColumns = {}
+      _.forIn(tableToColumns, (value, key) => {
+        if (_.find(tableNames, { old_table_name: key })) {
+          const newName = _.get(_.find(tableNames, { old_table_name: key }), 'old_table_name')
+          if (filterTableList.includes(key)) {
+            Object.assign(tempTableToColumns, { [newName]: value })
+          }
+        }
+      })
       const params = {
         ...databaseInfo,
         db_type: dbType,

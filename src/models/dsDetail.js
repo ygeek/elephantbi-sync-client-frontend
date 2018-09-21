@@ -77,6 +77,10 @@ export default {
     * fetchDsLog(action, { select, call, put }) {
       yield put({ type: 'changeLoading', payload: 'add' })
       const { activeKey, tableIds } = yield select(state => state.dsDetail)
+      if (tableIds.length === 0) {
+        yield put({ type: 'changeLoading', payload: 'sub' })
+        return
+      }
       const tableId = tableIds[activeKey].id
       const { data } = yield call(_fetchDsLog, tableId)
       if (data) {
