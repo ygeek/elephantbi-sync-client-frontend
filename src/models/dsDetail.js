@@ -155,6 +155,9 @@ export default {
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
     },
+    * setSyncStatus({ payload }, { select, call, put }) {
+      yield put({ type: 'fetchTableIds' })
+    }
   },
 
   reducers: {
