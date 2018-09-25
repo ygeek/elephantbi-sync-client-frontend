@@ -70,10 +70,26 @@ const DsListItem = ({
         }
         break;
       case 'trigger':
-         startSync(data.id, 1)
-         break;
+        confirmModal({
+          title: '立即触发同步',
+          content: '立即触发同步后，将重新同步此数据源，是否开始同步',
+          okText: '确认',
+          onOk() {
+            startSync(data.id, 1)
+          },
+          type: 'info'
+        })
+        break;
       case 'start':
-        startSync(data.id, 0)
+        confirmModal({
+          title: '开启同步',
+          content: '开启同步后，将根据您的时间设定，定期同步数据，是否确定开启同步',
+          okText: '确认',
+          onOk() {
+            startSync(data.id, 0)
+          },
+          type: 'info'
+        })
         break;
       case 'confirm':
         confirmSync(data.id)
