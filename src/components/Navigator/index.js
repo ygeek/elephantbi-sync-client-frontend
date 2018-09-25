@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'dva';
 import { Dropdown, Menu } from 'antd'
 import { routerRedux } from 'dva/router'
-import avatar from 'assets/avatar.jpg'
-import { WEBSOCKETURL } from 'constants/APIConstants'
+import defaultAvatar from 'assets/defaultAvatar.jpg'
+import { WEBSOCKETURL, AVATAR_URL } from 'constants/APIConstants'
 import Websocket from 'react-websocket';
 import _ from 'lodash'
 import styles from './index.less';
@@ -67,7 +67,14 @@ const Navigator = ({ dispatch, currentUser }) => {
         </button>
         <Dropdown overlay={menu} >
           <span>
-            <img className={styles.avatar} alt="" src={avatar} />   
+            <img
+              className={styles.avatar}
+              alt="" src={_.get(currentUser, 'avatar') ? `${AVATAR_URL}${currentUser.avatar}` : defaultAvatar}
+              onError={(e) => {
+                const target = e.currentTarget
+                target.src = defaultAvatar
+              }}
+            />   
             <span className={styles.name}>{_.get(currentUser, 'name')}</span>
           </span>
         </Dropdown>
