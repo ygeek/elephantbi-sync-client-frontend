@@ -26,7 +26,7 @@ const Database = ({ upload, dispatch }) => {
     dbType,
     loadingCount
   } = upload;
-  console.log('1111111111111', upload)
+
   const cancel = () => {
     dispatch(routerRedux.push('/selectDatabase'))
   }

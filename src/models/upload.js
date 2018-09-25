@@ -46,7 +46,7 @@ export default {
         db_type: `${dbType}`
       });
       if (data) {
-        yield put({ type: 'saveTableColumns', payload: data.data })
+        yield put({ type: 'saveTableColumns', payload: data })
         yield put({ type: 'fetchdbDataSource' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
@@ -60,7 +60,7 @@ export default {
         db_type: `${dbType}`
       })
       if (data) {
-        yield put({ type: 'saveDataSource', payload: data.data })
+        yield put({ type: 'saveDataSource', payload: data })
         yield put({ type: 'changeStep', payload: 'after' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
@@ -153,6 +153,7 @@ export default {
           ...tableData[index]
         }
       })
+
       const filterTableList = []
       allTableData.forEach((item) => {
         tableNames.push({ new_table_name: item.table_name, old_table_name: item.table_name })
