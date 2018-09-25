@@ -74,8 +74,8 @@ export default {
         page_size: pageInfo.pageSize
       });
       if (data) {
-        const dsList = _.get(data, 'data.list', [])
-        yield put({ type: 'saveDsList', payload: { [data.data.meta.current_page]: dsList} })
+        const dsList = _.get(data, 'list', [])
+        yield put({ type: 'saveDsList', payload: { [data.meta.current_page]: dsList} })
         yield put({ type: 'setMeta', payload: data.meta })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
