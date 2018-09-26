@@ -1,5 +1,6 @@
 import pathToRegexp from 'path-to-regexp';
 import _ from 'lodash'
+import globalMessage from 'helper/message.js'
 import { routerRedux } from 'dva/router'
 import { _connectDatabase, _fetchDbDataSource, _saveDataSource } from 'services/upload'
 
@@ -48,6 +49,11 @@ export default {
       if (data) {
         yield put({ type: 'saveTableColumns', payload: data })
         yield put({ type: 'fetchdbDataSource' })
+      }
+      if (err) {
+        if (_.get(err, 'response.error') === 'CONN_INFO_ERROR') {
+          globalMessage('error', '您的信息填写有误，请检查后重新填写')
+        }
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
     },

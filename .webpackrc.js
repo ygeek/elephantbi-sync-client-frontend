@@ -14,6 +14,7 @@ export default {
     "services": path.resolve(__dirname, "./src/services"),
     "utils": path.resolve(__dirname, "./src/utils"),
     "models": path.resolve(__dirname, "./src/models"),
+    "helper": path.resolve(__dirname, "./src/helper"),
     "routes": path.resolve(__dirname, "./src/routes"),
   }
 }
