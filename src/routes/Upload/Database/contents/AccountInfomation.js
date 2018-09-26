@@ -49,7 +49,7 @@ class AccountInformation extends React.Component {
                   >
                     {
                       getFieldDecorator('host', {
-                        rules: [{ required: true, message: '此项必填' }]
+                        rules: [{ required: true, message: '请输入正确的数据库host地址' }]
                       })(<Input />)
                     }
                   </FormItem>
@@ -64,7 +64,7 @@ class AccountInformation extends React.Component {
                   >
                     {
                       getFieldDecorator('port', {
-                        rules: [{ required: true, message: '此项必填' }]
+                        rules: [{ required: true, message: '请输入正确端口' }]
                       })(<Input />)
                     }
                   </FormItem>
@@ -76,7 +76,7 @@ class AccountInformation extends React.Component {
               >
                 {
                   getFieldDecorator('db_name', {
-                    rules: [{ required: true, message: '此项必填' }]
+                    rules: [{ required: true, message: '请输入正确的数据库名称' }]
                   })(<Input />)
                 }
               </FormItem>
@@ -86,7 +86,7 @@ class AccountInformation extends React.Component {
               >
                 {
                   getFieldDecorator('username', {
-                    rules: [{ required: true, message: '此项必填' }]
+                    rules: [{ required: true, message: '用户名是必填的' }]
                   })(
                     <Input />
                   )
@@ -98,7 +98,7 @@ class AccountInformation extends React.Component {
               >
                 {
                   getFieldDecorator('password', {
-                    rules: [{ required: true, message: '此项必填' }]
+                    rules: [{ required: true, message: '密码是必填的' }]
                   })(
                     <Input type="password" autoComplete="new-password" />
                   )
