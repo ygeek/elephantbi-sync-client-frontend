@@ -425,7 +425,11 @@ const DsDetail = ({ dsDetail, dispatch }) => {
                 getDataTable()
               }
             </TabPane>
-            <TabPane tab="历史记录" key="log">{historyRecord}</TabPane>
+            {
+              status === 0 ? null : (
+                <TabPane tab="历史记录" key="log">{historyRecord}</TabPane>
+              )
+            }
           </Tabs>
         </div>
         <TransferModal

@@ -5,6 +5,7 @@ import { Spin } from 'antd'
 import Modal from 'antd/lib/modal'
 import 'antd/lib/modal/style/css'
 import { routerRedux } from 'dva/router'
+import defaultPage from 'assets/dashDsDefault.png'
 import TransferModal from './TransferModal'
 import Footer from '../Upload/Footer'
 import DsListItem from './DsListItem'
@@ -120,23 +121,35 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
           className={styles.content}
           style={{ height: firstLogin === 1 ? 'calc(100% - 50px)' : '100%' }}
         >
-          {getDsList()}
-          <button
-            className={styles.loadmore}
-            style={{ display: _.get(pageInfo, 'page') < _.get(meta, 'page_count') ? 'block' : 'none' }}
-            onClick={() => {
-              dispatch({ type: 'dsList/loadmore' });
-              dispatch({ type: 'dsList/fetchDsList' })
-            }}
-          >
-            加载更多
-          </button>
-          <div
-            className={styles.deadline}
-            style={{ display: _.get(pageInfo, 'page') >= _.get(meta, 'page_count')  ? 'block' : 'none' }}
-          >
-            <div className={styles.divider} />我是有底线的 (⊙ˍ⊙)<div className={styles.divider}/>
+          <div>
+            {getDsList()}
+            <button
+              className={styles.loadmore}
+              style={{ display: _.get(pageInfo, 'page') < _.get(meta, 'page_count') ? 'block' : 'none' }}
+              onClick={() => {
+                dispatch({ type: 'dsList/loadmore' });
+                dispatch({ type: 'dsList/fetchDsList' })
+              }}
+            >
+              加载更多
+            </button>
+            <div
+              className={styles.deadline}
+              style={{ display: _.get(pageInfo, 'page') >= _.get(meta, 'page_count') && data.length > 0  ? 'block' : 'none' }}
+            >
+              <div className={styles.divider} />我是有底线的 (⊙ˍ⊙)<div className={styles.divider}/>
+            </div>
           </div>
+          {
+            data.length === 0 ? (
+              <div
+                className={styles.dsDefault}
+              >
+                <img alt="" src={defaultPage} />
+                <div>开始添加您的第一个数据源吧</div>
+              </div>
+            ) : null
+          }
         </div>
         <div
           className={styles.footer}
