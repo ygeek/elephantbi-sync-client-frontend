@@ -23,7 +23,8 @@ const BasicInformation = ({
   goAfter,
   changeFileName,
   changeDescription,
-  filterTableList
+  filterTableList,
+  databaseInfo
 }) => {
   const { getFieldDecorator } = form
   const tableNames = _.get(sublimeData, 'table_names', [])
@@ -93,7 +94,7 @@ const BasicInformation = ({
           {
             getFieldDecorator('name', {
               rules: [{ required: true, message: '此项是必填的' }],
-              initialValue: _.get(sublimeData, 'name')
+              initialValue: _.get(databaseInfo, 'db_name')
             })(<Input />)
           }
         </FormItem>

@@ -24,7 +24,8 @@ const Database = ({ upload, dispatch }) => {
     sourceType,
     filterTableList,
     dbType,
-    loadingCount
+    loadingCount,
+    databaseInfo
   } = upload;
 
   const cancel = () => {
@@ -119,6 +120,7 @@ const Database = ({ upload, dispatch }) => {
                   changeFileName={changeFileName}
                   changeDescription={changeDescription}
                   filterTableList={filterTableList}
+                  databaseInfo={databaseInfo}
                 />
               ) : null
             }
