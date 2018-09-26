@@ -93,7 +93,7 @@ const BasicInformation = ({
         >
           {
             getFieldDecorator('name', {
-              rules: [{ required: true, message: '此项是必填的' }],
+              rules: [{ required: true, message: '数据源名称是必填的' }],
               initialValue: _.get(databaseInfo, 'db_name')
             })(<Input />)
           }
