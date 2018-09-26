@@ -60,7 +60,7 @@ export const menuConfig = (syncStatus, source, sourceType) => ([{
 }, {
   title: '停止同步', key: 'stop', auth: [2, 3, 4, 6].includes(syncStatus) && isDataBase(sourceType)
 }, {
-  title: '开始同步', key: 'start', auth: [0, 5].includes(syncStatus) && isDataBase(sourceType)
+  title: '开启同步', key: 'start', auth: [0, 5].includes(syncStatus) && isDataBase(sourceType)
 }, {
   title: '同步确认', key: 'confirm', auth: [1].includes(syncStatus) && isDataBase(sourceType)
 }, {

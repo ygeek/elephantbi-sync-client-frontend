@@ -391,12 +391,16 @@ const DsDetail = ({ dsDetail, dispatch }) => {
                 </div>
               </div>
             </span>
-            <span className={styles.infoItem}>
-              <div className={styles.info}>
-                <div className={styles.infoTitle}>{`同步 ${(processedRows / totalRows) * 100}%`}</div>
-                <div className={styles.infoContent}>{getSyncTimeContent()}</div>
-              </div>
-            </span>
+            {
+              syncStatus === 3 ? (
+                <span className={styles.infoItem}>
+                  <div className={styles.info}>
+                    <div className={styles.infoTitle}>{`同步 ${parseInt((processedRows / totalRows) * 100, 10)}%`}</div>
+                    <div className={styles.infoContent}>{getSyncTimeContent()}</div>
+                  </div>
+                </span>
+              ) : null
+            }
           </div>
         </div>
         <div className={styles.leftColumn}>
