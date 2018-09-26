@@ -30,6 +30,7 @@ export default {
       if (data) {
         yield put({ type: 'currentUser/setToken', payload: data.access_token })
         yield put({ type: 'currentUser/fetchCurrentUser' })
+        yield put({ type: 'currentUser/setFirstLogin' })
       }
       return null
     },

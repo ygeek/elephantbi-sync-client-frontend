@@ -48,13 +48,17 @@ export default {
   effects: {
     * checkStatus(action, { select, call, put }) {
       const { firstLogin } = yield select(state => state.currentUser)
-      yield put({ type: 'fetchDsList' })
+      if (firstLogin) {
+        yield put({ type: 'fetchAllDsList' })
+      } else {
+        yield put({ type: 'fetchDsList' })
+      }
     },
     * fetchAllDsList(action, { select, call, put }) { //5001
       const { data } = yield call(_fetchDsList, { all: 1 });
       yield put({ type: 'changeLoading', payload: 'add' })
       if (data) {
-        const dsList = _.get(data, 'data.list', [])
+        const dsList = _.get(data, 'list', [])
         const canSync = []
         _.forEach(dsList, (item) => {
           if (item.client === 1) {
@@ -62,7 +66,7 @@ export default {
           }
         })
         yield put({ type: 'saveCanSync', payload: canSync })
-        yield put({ type: 'saveDsList', payload: dsList })
+        yield put({ type: 'saveDsList', payload: { 1: dsList } })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
     },

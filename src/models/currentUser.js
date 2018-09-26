@@ -81,6 +81,12 @@ export default {
     },
     setDomain(state, { payload: domain }) {
       return { ...state, domain }
+    },
+    setFirstLogin(state) {
+      return {
+        ...state,
+        firstLogin: 1
+      }
     }
   }
 }
