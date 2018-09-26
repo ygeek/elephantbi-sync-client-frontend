@@ -53,7 +53,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
   })
   data = data.map((item) => {
     if (`${item.id}` === `${_.get(syncStatus, 'ds_id')}`) {
-      return { ...item, sync_status: _.get(syncStatus, 'ds_status') }
+      return { ...item, sync_status: _.get(syncStatus, 'ds_status'), rows_count: _.get(syncStatus, 'rows_count'), }
     }
     return item
   })
