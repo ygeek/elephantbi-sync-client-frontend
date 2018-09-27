@@ -10,7 +10,7 @@ const Login = ({ form, login: modelState, dispatch }) => {
   const FormItem = Form.Item;
   const { getFieldDecorator } = form;
   const formLayout = {
-    labelCol: { span: 4, offset: 1 },
+    labelCol: { span: 5, offset: 1 },
     wrapperCol: { span: 16, offset: 1 }
   }
   const login = () => {
@@ -38,7 +38,7 @@ const Login = ({ form, login: modelState, dispatch }) => {
           }
         </FormItem>
         <FormItem
-          label="用户名"
+          label="邮箱/手机号"
           {...formLayout}
         >
           {
