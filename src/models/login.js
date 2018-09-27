@@ -1,5 +1,5 @@
 import pathToRegexp from 'path-to-regexp';
-import { _login } from '../services/currentUser'
+import { _login, _checkDomain } from '../services/currentUser'
 
 export default {
   namespace: 'login',
@@ -22,17 +22,27 @@ export default {
   effects: {
     * fetchToken({ payload }, { select, call, put }) {
       const { domain, ...params } = payload;
-      yield put({ type: 'currentUser/setDomain', payload: domain })
-      const { err, data } = yield call(_login, params)
-      if (err) {
-        return new Promise((resolve, reject) => { reject(err) })
-      }
+      const { data, err } = yield call(_checkDomain, { domain })
       if (data) {
-        yield put({ type: 'currentUser/setToken', payload: data.access_token })
-        yield put({ type: 'currentUser/fetchCurrentUser' })
-        yield put({ type: 'currentUser/setFirstLogin' })
+        if (!data.exists) {
+          return { data, err }
+        }
+        if (data.exists) {
+          yield put({ type: 'currentUser/setDomain', payload: domain })
+          const { err, data } = yield call(_login, params)
+          if (err) {
+          }
+          if (data) {
+            yield put({ type: 'currentUser/setToken', payload: data.access_token })
+            yield put({ type: 'currentUser/fetchCurrentUser' })
+            yield put({ type: 'currentUser/setFirstLogin' })
+          }
+          return { err, data }
+        }
       }
-      return null
+      if (err) {
+        return { err, data }
+      }
     },
   },
 

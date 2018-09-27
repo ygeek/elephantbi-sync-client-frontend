@@ -14,3 +14,12 @@ export async function _fetchCurrentUser() {
     method: 'GET'
   })
 }
+
+export async function _checkDomain(params) {
+  return requestSimple({
+    url: '/website/domain',
+    host: window.baseurl,
+    method: 'POST',
+    body: params
+  })
+}

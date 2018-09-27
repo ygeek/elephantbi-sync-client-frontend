@@ -21,12 +21,12 @@ function parseJSON(response) {
   return response.json();
 }
 
-function checkStatus(response) {
+async function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
   const error = new Error(response.statusText);
-  error.response = response;
+  error.response = await parseJSON(response).then(data => data);
   // 提示请求错误
   // errorMessage(response.status);
   throw error;
