@@ -254,7 +254,7 @@ const DsDetail = ({ dsDetail, dispatch }) => {
     if (theTime2 > 0) {
       const formatMinutes = parseInt(theTime1, 10) >= 10 ? parseInt(theTime1, 10) : `0${parseInt(theTime1, 10)}`
       const formatHours = parseInt(theTime2, 10) >= 10 ? parseInt(theTime2, 10) : `0${parseInt(theTime2, 10)}`
-      result = `${formatHours}:${formatMinutes}${formatSeconds}`;
+      result = `${formatHours}:${formatMinutes}:${formatSeconds}`;
     }
 
     return result;
