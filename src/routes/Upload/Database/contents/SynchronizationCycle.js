@@ -147,7 +147,7 @@ class SynchronizationCycle extends React.Component {
                   <Col span={6}>在：</Col>
                   <Col span={18}>
                     <Select
-                      style={{ width: '90px' }}
+                      style={{ width: '110px' }}
                       value={date}
                       onChange={(val) => { changeValue({ sync_at_day: val }) }}
                     >{getOptions(dateOptions)}</Select>
@@ -176,7 +176,7 @@ class SynchronizationCycle extends React.Component {
                     >{getOptions(monthOption)}</Select>
                     <span className={styles.divider}>~</span>
                     <Select
-                      style={{ width: '90px' }}
+                      style={{ width: '110px' }}
                       value={date}
                       onChange={(val) => { changeValue({ sync_at_day: val }) }}
                     >{getOptions(dateOptions)}</Select>
