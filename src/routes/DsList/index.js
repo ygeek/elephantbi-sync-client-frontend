@@ -141,7 +141,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
             </div>
           </div>
           {
-            data.length === 0 ? (
+            data.length === 0 && loadingCount === 0 ? (
               <div
                 className={styles.dsDefault}
               >
