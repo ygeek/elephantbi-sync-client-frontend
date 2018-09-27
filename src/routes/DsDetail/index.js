@@ -105,6 +105,9 @@ const DsDetail = ({ dsDetail, dispatch }) => {
       dataSource={dsLog}
       pagination={false}
       className={styles.logTable}
+      locale={{
+        emptyText: '暂无记录'
+      }}
     />
   )
   const toEdit = (id) => {
