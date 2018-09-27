@@ -63,6 +63,7 @@ class SynchronizationCycle extends React.Component {
                   use12Hours
                   style={{ width: '90px' }}
                   placeholder=""
+                  allowEmpty={false}
                   value={moment(startTime, 'HH:mm a')}
                   onChange={(time, timeString) => {
                     changeSchedule({ sync_starts_time: timeString })
@@ -74,6 +75,7 @@ class SynchronizationCycle extends React.Component {
                   use12Hours
                   style={{ width: '90px' }}
                   placeholder=""
+                  allowEmpty={false}
                   value={moment(endTime, 'HH:mm a')}
                   onChange={(time, timeString) => {
                     changeSchedule({ sync_ends_time: timeString })
@@ -92,6 +94,7 @@ class SynchronizationCycle extends React.Component {
                   format="hh:mm a"
                   use12Hours
                   style={{ width: '90px' }}
+                  allowEmpty={false}
                   placeholder=""
                   value={moment(time, 'HH:mm a')}
                   onChange={(time, timeString) => { changeSchedule({ sync_at_time: timeString }) }}
@@ -115,6 +118,7 @@ class SynchronizationCycle extends React.Component {
                   format="hh:mm a"
                   use12Hours
                   style={{ width: '90px' }}
+                  allowEmpty={false}
                   placeholder=""
                   value={moment(time, 'HH:mm a')}
                   onChange={(time, timeString) => { changeSchedule({ sync_at_time: timeString }) }}
@@ -138,6 +142,7 @@ class SynchronizationCycle extends React.Component {
                   format="hh:mm a"
                   use12Hours
                   style={{ width: '90px' }}
+                  allowEmpty={false}
                   placeholder=""
                   value={moment(time, 'HH:mm a')}
                   onChange={(time, timeString) => { changeSchedule({ sync_at_time: timeString }) }}
@@ -167,6 +172,7 @@ class SynchronizationCycle extends React.Component {
                   format="hh:mm a"
                   use12Hours
                   style={{ width: '90px' }}
+                  allowEmpty={false}
                   placeholder=""
                   value={moment(time, 'HH:mm a')}
                   onChange={(time, timeString) => { changeSchedule({ sync_at_time: timeString }) }}
