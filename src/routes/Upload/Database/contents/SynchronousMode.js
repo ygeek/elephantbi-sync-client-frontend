@@ -66,6 +66,7 @@ const SynchronousMode = ({ sublimeData, changeSyncInfo, goPrev, createDs }) => {
             >
               <Select
                 value={_.get(syncInfo, `${oldName}.by_col_uuid`)}
+                notFoundContent="暂无字段可选择"
                 onChange={(val) => {
                   changeSyncInfo(oldName, {
                     by_col_uuid: val,

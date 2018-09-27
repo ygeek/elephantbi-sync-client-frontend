@@ -62,6 +62,7 @@ const SynchronousMode = ({ tableToColumns, tableNames, changeSyncMode, syncMode 
             >
               <Select
                 value={_.get(syncMode, `${oldName}.by_col_uuid`)}
+                notFoundContent="暂无字段可选择"
                 onChange={(val) => {
                   changeSyncMode(oldName, {
                     by_col_uuid: val,
