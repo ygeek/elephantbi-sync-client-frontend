@@ -164,7 +164,7 @@ export default {
       allTableData.forEach((item) => {
         tableNames.push({ new_table_name: item.table_name, old_table_name: item.table_name })
         Object.assign(tableToColumns, { [item.table_name]: item.columns })
-        Object.assign(sync_mode, { [item.table_name]: { mode: null, by_col_name: null, by_col_uuid: null } })
+        Object.assign(sync_mode, { [item.table_name]: { mode: '0', by_col_name: null, by_col_uuid: null } })
         filterTableList.push(item.table_name)
       })
 
