@@ -37,7 +37,10 @@ const Navigator = ({ dispatch, currentUser }) => {
     }
   }
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      style={{ display: _.get(currentUser, 'firstLogin', 1) === 0 ? 'block' : 'none' }}
+    >
       <Websocket
         url={WEBSOCKETURL(currentUser.id)}
         onMessage={handleSocket}

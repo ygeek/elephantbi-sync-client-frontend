@@ -1,5 +1,7 @@
 import pathToRegexp from 'path-to-regexp';
+import _ from 'lodash'
 import { _login, _checkDomain } from '../services/currentUser'
+import { _fetchDsList } from '../services/dataSource'
 
 export default {
   namespace: 'login',
@@ -35,7 +37,7 @@ export default {
           if (data) {
             yield put({ type: 'currentUser/setToken', payload: data.access_token })
             yield put({ type: 'currentUser/fetchCurrentUser' })
-            yield put({ type: 'currentUser/setFirstLogin' })
+            yield put({ type: 'fetchDsList' })
           }
           return { err, data }
         }
@@ -44,6 +46,17 @@ export default {
         return { err, data }
       }
     },
+    * fetchDsList(action, { select, call, put }) {
+      const { data } = yield call(_fetchDsList, { all: 1 });
+      if (data) {
+        const dsList = _.get(data, 'list', [])
+        if (dsList.length > 0) {
+          yield put({ type: 'currentUser/setFirstLogin' })
+        } else {
+          yield put({ type: 'currentUser/changeStatus' })
+        }
+      }
+    }
   },
 
   reducers: {
