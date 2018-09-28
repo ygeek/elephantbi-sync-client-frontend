@@ -77,7 +77,7 @@ const DsDetail = ({ dsDetail, dispatch }) => {
   const showModal = (method, id, type) => {
     confirmModal({
       title: '提示',
-      content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
+      content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止并继续',
       okText: '停止并继续',
       type: 'warning',
       onOk() {

@@ -61,7 +61,7 @@ export default {
         const dsList = _.get(data, 'list', [])
         const canSync = []
         _.forEach(dsList, (item) => {
-          if (item.client === 1) {
+          if (!_.get(item, 'other_client')) {
             canSync.push(item.id)
           }
         })

@@ -36,8 +36,7 @@ export default {
           }
           if (data) {
             yield put({ type: 'currentUser/setToken', payload: data.access_token })
-            yield put({ type: 'currentUser/fetchCurrentUser' })
-            yield put({ type: 'fetchDsList' })
+            yield put({ type: 'fetchDsList', payload: data.access_token })
           }
           return { err, data }
         }
@@ -52,8 +51,10 @@ export default {
         const dsList = _.get(data, 'list', [])
         if (dsList.length > 0) {
           yield put({ type: 'currentUser/setFirstLogin' })
+          yield put({ type: 'currentUser/fetchCurrentUser' })
         } else {
           yield put({ type: 'currentUser/changeStatus' })
+          yield put({ type: 'currentUser/fetchCurrentUser' })
         }
       }
     }

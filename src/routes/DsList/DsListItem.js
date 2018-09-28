@@ -34,7 +34,7 @@ const DsListItem = ({
   const showModal = (method, id, type) => {
     confirmModal({
       title: '提示',
-      content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止转让并继续',
+      content: '停止同步才能进行转让/编辑/删除数据源操作，是否停止并继续',
       okText: '停止并继续',
       type: 'warning',
       onOk() {
@@ -149,7 +149,7 @@ const DsListItem = ({
         </div>
         <button
           className={styles.clientSign}
-          style={{ display: data.client === 1 ? 'none' : 'block' }}
+          style={{ display: _.get(data, 'other_client', 0) === 0 ? 'none' : 'block' }}
         >
           其他客户端
         </button>
@@ -159,7 +159,7 @@ const DsListItem = ({
               checked={checked}
               className={styles.checkBox}
               onChange={(checked) => {
-                if (data.client === 1) {
+                if (_.get(data, 'other_client', 0) === 0) {
                   changeCanSync(data.id)
                 }
               }}
