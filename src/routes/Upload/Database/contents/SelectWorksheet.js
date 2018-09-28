@@ -4,6 +4,7 @@ import 'antd/lib/row/style/css'
 import Checkbox from 'antd/lib/checkbox'
 import 'antd/lib/checkbox/style/css'
 import _ from 'lodash'
+import confirmModal from 'components/ConfirmModal'
 import Footer from '../../Footer';
 import DataSourceTable from 'components/DataSourceTable'
 import styles from './index.less'
@@ -30,7 +31,7 @@ class SelectWorksheet extends React.Component {
     const plainOptions = tableNames.map(item => item.old_table_name)
     this.setState({
       checkedList: filterTableList,
-      indeterminate: false,
+      indeterminate: filterTableList.length < plainOptions.length,
       checkAll: filterTableList.length === plainOptions.length
     });
   }
@@ -70,7 +71,8 @@ class SelectWorksheet extends React.Component {
       sublimeData,
       changeTableToColumns,
       goPrev,
-      goAfter
+      goAfter,
+      filterTableList
     } = this.props;
     const { activeKey } = this.state;
     const currentDataSource = _.get(dataSource[activeKey], 'records', [])
@@ -137,6 +139,17 @@ class SelectWorksheet extends React.Component {
           text2="下一步"
           click1={goPrev}
           click2={() => {
+            if (filterTableList.length === 0) {
+              confirmModal({
+                title: '选择工作表',
+                type: 'warning',
+                content: '请至少选择一个工作表',
+                buttonNum: 1,
+                okText: '我知道了',
+                onOk: () => {}
+              })
+              return
+            }
             goAfter();
           }}
         />
