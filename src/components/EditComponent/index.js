@@ -9,17 +9,12 @@ import 'antd/lib/row/style/css'
 import Menu from 'antd/lib/menu'
 import 'antd/lib/menu/style/css'
 import dateIcon from 'assets/date.png'
+import uuid from 'uuid'
 import numberIcon from 'assets/number.png'
 import stringIcon from 'assets/string.png'
 import styles from './index.less'
 
 const MenuItem = Menu.Item
-
-const typeMap = {
-  string: <img alt="" src={stringIcon} className={styles.typeIcon} />,
-  number: <img alt="" src={numberIcon} className={styles.typeIcon} />,
-  date: <img alt="" src={dateIcon} className={styles.typeIcon} />
-}
 
 class EditComponent extends React.Component {
   constructor(props) {
@@ -29,6 +24,7 @@ class EditComponent extends React.Component {
       editVisible: false,
       changeType: null,
       changeName: null,
+      idMap: uuid()
     }
     this.showEditIcon = this.showEditIcon.bind(this)
     this.hideEditIcon = this.hideEditIcon.bind(this)
@@ -37,13 +33,27 @@ class EditComponent extends React.Component {
     this.setChangeType = this.setChangeType.bind(this)
     this.resetState = this.resetState.bind(this)
     this.changeTableToColumns = this.changeTableToColumns.bind(this)
+    this.clickDocument = this.clickDocument.bind(this)
   }
 
-  showEditIcon() {
-    const { editing } = this.state;
-    if (!editing) {
-      this.setState({ editVisible: true })
-    }
+  componentDidMount() {
+    document.addEventListener('click', this.clickDocument)
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.clickDocument)
+  }
+
+  setChangeType({ key }) {
+    this.setState({ changeType: key })
+  }
+
+  setChangeName(e) {
+    this.setState({ changeName: e.target.value })
+  }
+
+  setEditMode() {
+    this.setState({ editing: true })
   }
 
   hideEditIcon() {
@@ -53,16 +63,11 @@ class EditComponent extends React.Component {
     }
   }
 
-  setEditMode() {
-    this.setState({ editing: true })
-  }
-
-  setChangeName(e) {
-    this.setState({ changeName: e.target.value })
-  }
-
-  setChangeType({ key }) {
-    this.setState({ changeType: key })
+  showEditIcon() {
+    const { editing } = this.state;
+    if (!editing) {
+      this.setState({ editVisible: true })
+    }
   }
 
   resetState() {
@@ -70,8 +75,18 @@ class EditComponent extends React.Component {
       editing: false,
       editVisible: false,
       changeType: null,
-      changeName: null,
+      changeName: null
     })
+  }
+
+  clickDocument(e) {
+    const { idMap } = this.state
+    const { values } = Object;
+    const id = e.target.getAttribute('id')
+    const classes = e.target.getAttribute('class') || ''
+    if (idMap !== id && classes.indexOf('ant-dropdown-menu-item') === -1) {
+      this.resetState()
+    }
   }
 
   changeTableToColumns() {
@@ -92,8 +107,13 @@ class EditComponent extends React.Component {
   }
 
   render() {
-    const { editVisible, editing, changeType, changeName } = this.state
-    const { columns, serial } = this.props
+    const { editVisible, editing, changeType, changeName, idMap } = this.state
+    const typeMap = {
+      string: <img id={idMap} alt="" src={stringIcon} className={styles.typeIcon} />,
+      number: <img id={idMap} alt="" src={numberIcon} className={styles.typeIcon} />,
+      date: <img id={idMap} alt="" src={dateIcon} className={styles.typeIcon} />
+    }
+    const { columns, serial, canEdit = true } = this.props
     const currentColumn = _.get({ columns }, `columns[${serial}]`)
     const dataType = _.get(currentColumn, 'data_type')
     const name = _.get(currentColumn, 'nick_name')
@@ -101,9 +121,9 @@ class EditComponent extends React.Component {
       <Menu
         onClick={this.setChangeType}
       >
-        <MenuItem key="string"><img alt="" src={stringIcon} className={styles.typeIcon} />文本</MenuItem>
-        <MenuItem key="number"><img alt="" src={numberIcon} className={styles.typeIcon} />数值</MenuItem>
-        <MenuItem key="date"><img alt="" src={dateIcon} className={styles.typeIcon} />日期</MenuItem>
+        <MenuItem key="string" id={idMap}><img id={idMap} alt="" src={stringIcon} className={styles.typeIcon} />文本</MenuItem>
+        <MenuItem key="number" id={idMap}><img id={idMap} alt="" src={numberIcon} className={styles.typeIcon} />数值</MenuItem>
+        <MenuItem key="date" id={idMap}><img id={idMap} alt="" src={dateIcon} className={styles.typeIcon} />日期</MenuItem>
       </Menu>
     );
     return (
@@ -118,7 +138,7 @@ class EditComponent extends React.Component {
               overlay={menu}
               trigger={['click']}
             >
-              <span>{typeMap[changeType || dataType]}<Icon type="down" /></span>
+              <span id={idMap}>{typeMap[changeType || dataType]}<Icon type="down" id={idMap} /></span>
             </Dropdown>
           ) : <span>{typeMap[dataType]}</span>
         }
@@ -128,33 +148,40 @@ class EditComponent extends React.Component {
           ) : (<input
             value={changeName !== null ? changeName : name}
             onChange={this.setChangeName}
+            id={idMap}
           />)
         }
         {
-          !editing ? (
+          !editing && canEdit ? (
             <button
+              id={idMap}
               className={styles.clickItem}
               onClick={this.setEditMode}
               style={{ display: editVisible ? 'inline' : 'none' }}
             >
-              <Icon type="edit" />
+              <Icon type="edit" id={idMap} />
             </button>
-          ) : (
+          ) : null
+        }
+        {
+          editing && canEdit ? (
             <span>
               <button
+                id={idMap}
                 className={styles.clickItem}
                 onClick={this.changeTableToColumns}
               >
-                <Icon type="check" />
+                <Icon type="check" id={idMap} />
               </button>
               <button
+                id={idMap}
                 className={styles.clickItem}
                 onClick={this.resetState}
               >
-                <Icon type="close" />
+                <Icon type="close" id={idMap} />
               </button>
             </span>
-          )
+          ) : null
         }
       </Row>
     )
