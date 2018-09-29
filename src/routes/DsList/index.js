@@ -5,7 +5,8 @@ import { Spin } from 'antd'
 import Modal from 'antd/lib/modal'
 import 'antd/lib/modal/style/css'
 import { routerRedux } from 'dva/router'
-import defaultPage from 'assets/dashDsDefault.png'
+import arrow from 'assets/arrow.svg';
+import defaultPage from 'assets/dashDsDefault.svg'
 import TransferModal from './TransferModal'
 import Footer from '../Upload/Footer'
 import DsListItem from './DsListItem'
@@ -145,8 +146,9 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
               <div
                 className={styles.dsDefault}
               >
-                <img alt="" src={defaultPage} />
-                <div>开始添加您的第一个数据源吧</div>
+                <img alt="" src={arrow} className={styles.arrow} />
+                <img alt="" src={defaultPage} className={styles.default} />
+                <div>暂无客户端同步类型数据源，请点击右上角 <font color="#76c1ef">新增数据源</font> 建立同步数据源</div>
               </div>
             ) : null
           }
