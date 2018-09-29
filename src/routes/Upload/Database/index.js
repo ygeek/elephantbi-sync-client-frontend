@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'dva'
 import Steps from 'antd/lib/steps';
 import 'antd/lib/steps/style/css'
-import { Spin } from 'antd'
+import Spin from 'antd/lib/spin'
+import 'antd/lib/spin/style/css'
 import _ from 'lodash';
 import { routerRedux } from 'dva/router'
 import { stepConfig } from './config';
