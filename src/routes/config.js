@@ -40,7 +40,7 @@ export const dslistMap = {
 }
 
 export const isSyncing = (status) => {
-  if ([2, 3, 4, 5].includes(status)) {
+  if ([2, 3, 4].includes(status)) {
     return true
   }
   return false
