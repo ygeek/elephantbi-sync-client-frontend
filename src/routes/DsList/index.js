@@ -165,8 +165,7 @@ const DsList = ({ dsList, dispatch, currentUser }) => {
               dispatch({ type: 'dsList/fetchDsList' })
             }}
             click2={() => {
-              dispatch({ type: 'currentUser/changeStatus' })
-              dispatch({ type: 'dsList/fetchDsList' })
+              dispatch({ type: 'dsList/batchSync' })
             }}
           />
         </div>

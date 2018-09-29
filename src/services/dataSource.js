@@ -1,5 +1,7 @@
 /*global window*/
+import _ from 'lodash'
 import { requestSimple } from '../utils/request'
+const domain = _.get(JSON.parse(localStorage.getItem('reduxState')), 'currentUser.domain')
 
 export async function _fetchDsDetail(id, params) {
   return requestSimple({
@@ -20,7 +22,10 @@ export async function _fetchDsList(params) { //5001
   return requestSimple({
     method: 'GET',
     url: '/ds/list',
-    params,
+    params: {
+      ...params,
+      domain
+    },
     host: window.newHost
   })
 }
@@ -73,7 +78,10 @@ export async function _startSync(id, params) { //5001
   return requestSimple({
     url: `/ds/${id}/sync`,
     method: 'POST',
-    body: params,
+    body: {
+      ...params,
+      domain
+    },
     host: window.newHost
   })
 }
@@ -82,6 +90,7 @@ export async function _stopSync(id) { //5001
   return requestSimple({
     url: `/ds/${id}/sync`,
     method: 'DELETE',
+    body: { domain },
     host: window.newHost
   })
 }
@@ -98,5 +107,17 @@ export async function _changeColumns(id, params) {
     url: `/table/${id}/info`,
     method: 'PUT',
     body: params
+  })
+}
+
+export async function _batchSync(params) {
+  return requestSimple({
+    url: `/ds/list/sync`,
+    method: 'POST',
+    body: {
+      params,
+      domain
+    },
+    host: window.newHost
   })
 }

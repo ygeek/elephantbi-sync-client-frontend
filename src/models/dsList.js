@@ -8,7 +8,8 @@ import {
   _tranferUser,
   _startSync,
   _stopSync,
-  _confirmSync
+  _confirmSync,
+  _batchSync
 } from '../services/dataSource'
 
 export default {
@@ -134,6 +135,14 @@ export default {
         yield put({ type: 'fetchDsList' })
       }
       yield put({ type: 'changeLoading', payload: 'sub' })
+    },
+    * batchSync(action, { select, call, put }) {
+      const { canSync } = yield select(state => state.dsList)
+      const { data, err } = yield call(_batchSync, { ds_ids: canSync })
+      if (data) {
+        yield put({ type: 'currentUser/changeStatus' })
+        yield put({ type: 'dsList/fetchDsList' })
+      }
     }
   },
 
