@@ -30,21 +30,31 @@
 }
 
 .dsListItem {
-  height: 100px;
+  height: 92px;
   margin-bottom: 10px;
   background-color: #fff;
-  font-size: 12px;
-  position: relative;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  padding-right: 24px;
+  .mainInfoWrapper {
+    height: 100%;
+    background-color: #fff;
+    flex-grow: 1;
+    text-align: left;
+    padding-left: 24px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+  }
   .mainInfo {
     display: inline-block;
-    position: absolute;
-    top: 30px;
-    left: 24px;
+    position: relative;
     height: 40px;
     width: 360px;
     .typeIcon {
-      height: 40px;
-      width: 40px;
+      height: 44px;
+      width: 44px;
       position: absolute;
       left: 0px;
       top: 0px;
@@ -53,36 +63,42 @@
       position: absolute;
       height: 20px;
       line-height: 20px;
-      width: 300px;
+      width: 200px;
       top: 0;
-      left: 60px;
+      color: #474747;
+      font-size: 16px;
+      left: 64px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .description {
       position: absolute;
       line-height: 20px;
       height: 20px;
-      width: 300px;
+      color: #757575;
+      width: 200px;
       bottom: 0;
-      left: 60px;
+      left: 64px;
     }
   }
 
   .dataInfo {
     font-size: 10px;
     display: inline-block;
-    position: absolute;
-    top: 30px;
-    right: 200px;
+    position: relative;
+    height: 40px;
     .infoItem {
       display: inline-block;
-      margin-right: 20px;
+      margin-right:20px;
       height: 40px;
-      width: 60px;
+      width: 50px;
       position: relative;
     }
     .infoTitle {
       color: #999;
       position: absolute;
+      color: #757575;
       top: 0px;
       left: 0px;
       width: 100%;
@@ -91,6 +107,8 @@
       position: absolute;
       bottom: 0px;
       left: 0px;
+      font-size: 12px;
+      color: #474747;
     }
     .syncInfoItem {
       .infoItem;
@@ -129,9 +147,7 @@
   }
   .operate {
     font-size: 16px;
-    position: absolute;
-    top: 42px;
-    right: 50px;
+    position: relative;
   }
 }
 

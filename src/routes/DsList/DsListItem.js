@@ -120,7 +120,12 @@ const DsListItem = ({
   )
   return (
     <div className={styles.dsListItem}>
-      <div className={styles.content}>
+      <button
+        className={styles.mainInfoWrapper}
+        onClick={() => {
+          toDetail(data.id);
+        }}
+      >
         <div className={styles.mainInfo}>
           <img alt="" src={dslistMap[`${data.source_type}`].icon} className={styles.typeIcon} />
           <div className={styles.infoDetail}>
@@ -128,6 +133,7 @@ const DsListItem = ({
             <div className={styles.description}>{`${dslistMap[_.get(data, 'source_type')]['name']} - 客户端连接`}</div>
           </div>
         </div>
+        </button>
         <div className={styles.dataInfo}>
           <div className={styles.infoItem}>
             <div className={styles.infoTitle}>工作表</div>
@@ -173,7 +179,6 @@ const DsListItem = ({
               </Dropdown>
             )
         }
-      </div>
     </div>
   )
 }

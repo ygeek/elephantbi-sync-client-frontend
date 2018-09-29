@@ -8,6 +8,7 @@ import 'antd/lib/col/style/css'
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style/css'
 import Button from 'antd/lib/button'
+import _ from 'lodash'
 import 'antd/lib/button/style/css'
 import Footer from '../../Footer';
 import styles from './index.less';
@@ -20,7 +21,14 @@ const formLayout = {
 
 class AccountInformation extends React.Component {
   render() {
-    const { form, dispatch, sourceType, cancel, goAfter } = this.props
+    const {
+      form,
+      dispatch,
+      sourceType,
+      cancel,
+      goAfter,
+      databaseInfo
+    } = this.props
     const { getFieldDecorator } = form
     const databaseConnect = () => {
       form.validateFields((errors, values) => {
@@ -49,7 +57,8 @@ class AccountInformation extends React.Component {
                   >
                     {
                       getFieldDecorator('host', {
-                        rules: [{ required: true, message: '请输入正确的数据库host地址' }]
+                        rules: [{ required: true, message: '请输入正确的数据库host地址' }],
+                        initialValue: _.get(databaseInfo, 'host')
                       })(<Input />)
                     }
                   </FormItem>
@@ -64,7 +73,8 @@ class AccountInformation extends React.Component {
                   >
                     {
                       getFieldDecorator('port', {
-                        rules: [{ required: true, message: '请输入正确端口' }]
+                        rules: [{ required: true, message: '请输入正确端口' }],
+                        initialValue: _.get(databaseInfo, 'port')
                       })(<Input />)
                     }
                   </FormItem>
@@ -76,7 +86,8 @@ class AccountInformation extends React.Component {
               >
                 {
                   getFieldDecorator('db_name', {
-                    rules: [{ required: true, message: '请输入正确的数据库名称' }]
+                    rules: [{ required: true, message: '请输入正确的数据库名称' }],
+                    initialValue: _.get(databaseInfo, 'db_name')
                   })(<Input />)
                 }
               </FormItem>
@@ -86,7 +97,8 @@ class AccountInformation extends React.Component {
               >
                 {
                   getFieldDecorator('username', {
-                    rules: [{ required: true, message: '用户名是必填的' }]
+                    rules: [{ required: true, message: '用户名是必填的' }],
+                    initialValue: _.get(databaseInfo, 'username')
                   })(
                     <Input />
                   )
@@ -98,7 +110,8 @@ class AccountInformation extends React.Component {
               >
                 {
                   getFieldDecorator('password', {
-                    rules: [{ required: true, message: '密码是必填的' }]
+                    rules: [{ required: true, message: '密码是必填的' }],
+                    initialValue: _.get(databaseInfo, 'password')
                   })(
                     <Input type="password" autoComplete="new-password" />
                   )

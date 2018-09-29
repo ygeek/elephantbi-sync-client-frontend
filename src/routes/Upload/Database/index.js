@@ -91,6 +91,7 @@ const Database = ({ upload, dispatch }) => {
                   dispatch={dispatch}
                   cancel={cancel}
                   goAfter={goAfter}
+                  databaseInfo={databaseInfo}
                 />
               ) : null
             }
