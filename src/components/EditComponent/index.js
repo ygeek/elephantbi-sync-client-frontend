@@ -122,8 +122,16 @@ class EditComponent extends React.Component {
         onClick={this.setChangeType}
       >
         <MenuItem key="string" id={idMap}><img id={idMap} alt="" src={stringIcon} className={styles.typeIcon} />文本</MenuItem>
-        <MenuItem key="number" id={idMap}><img id={idMap} alt="" src={numberIcon} className={styles.typeIcon} />数值</MenuItem>
-        <MenuItem key="date" id={idMap}><img id={idMap} alt="" src={dateIcon} className={styles.typeIcon} />日期</MenuItem>
+        {
+          dataType === 'number' ? null : (
+            <MenuItem key="date" id={idMap}><img id={idMap} alt="" src={dateIcon} className={styles.typeIcon} />日期</MenuItem>
+          )
+        }
+        {
+          dataType === 'date' ? null : (
+            <MenuItem key="number" id={idMap}><img id={idMap} alt="" src={numberIcon} className={styles.typeIcon} />数值</MenuItem>
+          )
+        }
       </Menu>
     );
     return (
